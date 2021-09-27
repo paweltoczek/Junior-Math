@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "802911089633",
+    "project_id": "junior-math-android-app",
+    "storage_bucket": "junior-math-android-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802911089633:android:f79c301690467bfeced8a0",
+        "android_client_info": {
+          "package_name": "com.amadev.juniormath"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802911089633-i3crbv9ga3ekfuepv1t9skg24enbcrvg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amadev.juniormath",
+            "certificate_hash": "1fef8d051cc4364878b41577c0b563220f010bb5"
+          }
+        },
+        {
+          "client_id": "802911089633-tmmtsk4b6vkmd6arjp5kdeb5430kkt6e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGQ4f2iULhuQk72aoBXrUHqVP-MFMfzSI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802911089633-tmmtsk4b6vkmd6arjp5kdeb5430kkt6e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
