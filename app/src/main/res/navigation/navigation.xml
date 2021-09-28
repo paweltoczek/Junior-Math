@@ -15,5 +15,13 @@
     <fragment
         android:id="@+id/loginScreenFragment"
         android:name="com.amadev.juniormath.ui.screen.loginScreen.LoginScreenFragment"
-        android:label="LoginScreenFragment" />
+        android:label="LoginScreenFragment" >
+        <action
+            android:id="@+id/action_loginScreenFragment_to_signUpScreen"
+            app:destination="@id/signUpScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpScreen"
+        android:name="com.amadev.juniormath.ui.screen.signUpScreen.SignUpScreen"
+        android:label="SignUpScreen" />
 </navigation>

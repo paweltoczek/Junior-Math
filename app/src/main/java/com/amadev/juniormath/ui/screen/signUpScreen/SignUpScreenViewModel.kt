@@ -1,4 +1,4 @@
-package com.amadev.juniormath.ui.screen.loginScreen
+package com.amadev.juniormath.ui.screen.signUpScreen
 
 import android.content.Context
 import android.util.Patterns
@@ -7,21 +7,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.amadev.juniormath.util.ProvideMessage
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor(
+class SignUpScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseAuth: FirebaseAuth
 ) : ViewModel(), ProvideMessage {
-
-    private val currentUser = firebaseAuth.currentUser
 
     val emailInput = mutableStateOf("")
     val emailInputErrorTextState = mutableStateOf(false)
@@ -31,13 +29,14 @@ class LoginScreenViewModel @Inject constructor(
     val passwordInputErrorTextState = mutableStateOf(false)
     val passwordInputErrorTextValue = mutableStateOf("")
 
-    val loginButtonState = mutableStateOf(false)
+    val repeatPasswordInput = mutableStateOf("")
+    val repeatPasswordInputErrorTextState = mutableStateOf(false)
+    val repeatPasswordInputErrorTextValue = mutableStateOf("")
+
+    val signUpButtonState = mutableStateOf(false)
 
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
-
-    private val _loginAutomatically = MutableLiveData<Boolean>()
-    val loginAutomatically = _loginAutomatically
 
     fun onEmailInputChanged(input: String) {
         emailInput.value = input
@@ -47,6 +46,11 @@ class LoginScreenViewModel @Inject constructor(
     fun onPasswordInputChanged(input: String) {
         passwordInput.value = input
         passwordInputErrorTextState.value = false
+    }
+
+    fun onRepeatPasswordInputChanged(input: String) {
+        repeatPasswordInput.value = input
+        repeatPasswordInputErrorTextState.value = false
     }
 
     fun validateInput() {
@@ -63,56 +67,50 @@ class LoginScreenViewModel @Inject constructor(
                 passwordInputErrorTextState.value = true
                 passwordInputErrorTextValue.value = getMessage(fieldCantBeEmpty, context)
             }
+            passwordInput.value.trim() != repeatPasswordInput.value.trim() -> {
+                repeatPasswordInputErrorTextState.value = true
+                repeatPasswordInputErrorTextValue.value = getMessage(passwordsMustBeSame, context)
+            }
             else -> {
-                loginButtonState.value = true
-                doLoginWithEmailAndPassword()
+                signUpButtonState.value = true
+                createUserWithEmailAndPassword()
             }
         }
     }
 
-    private fun doLoginWithEmailAndPassword() {
-        firebaseAuth.signInWithEmailAndPassword(
+    private fun createUserWithEmailAndPassword() {
+        firebaseAuth.createUserWithEmailAndPassword(
             emailInput.value.trim(),
             passwordInput.value.trim()
         )
             .addOnCompleteListener {
-
                 if (it.isSuccessful) {
-                    if (currentUser != null) {
-                        if (currentUser.isEmailVerified.not()) {
-                            _popUpMessage.value = getMessage(verifyEmailSent, context)
-                            loginButtonState.value = false
-                        } else {
-                            loginAutomatically.value = true
-                        }
-                    }
+                    sendVerificationEmail()
+                    signUpButtonState.value = false
+                    _popUpMessage.value = getMessage(verificationEmailSent, context)
+
                 } else if (it.isSuccessful.not()) {
                     try {
                         throw it.exception!!
-                    } catch (e: FirebaseAuthEmailException) {
-                        loginButtonState.value = false
+                    } catch (e: FirebaseAuthWeakPasswordException) {
+                        signUpButtonState.value = false
+                        _popUpMessage.value = e.message
+                    } catch (e: FirebaseAuthUserCollisionException) {
+                        signUpButtonState.value = false
                         _popUpMessage.value = e.message
                     } catch (e: FirebaseAuthException) {
-                        loginButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: FirebaseAuthInvalidUserException) {
-                        loginButtonState.value = false
+                        signUpButtonState.value = false
                         _popUpMessage.value = e.message
                     } catch (e: TimeoutException) {
-                        loginButtonState.value = false
+                        signUpButtonState.value = false
+                        _popUpMessage.value = e.message
+                    } catch (e: Exception) {
+                        signUpButtonState.value = false
                         _popUpMessage.value = e.message
                     }
                 }
             }
-
     }
 
-    fun loginAutomaticallyIfPossible() {
-        if (currentUser != null) {
-            if (currentUser.isEmailVerified) {
-                loginAutomatically.value = true
-            }
-        }
-    }
-
+    private fun sendVerificationEmail() = firebaseAuth.currentUser?.sendEmailVerification()
 }

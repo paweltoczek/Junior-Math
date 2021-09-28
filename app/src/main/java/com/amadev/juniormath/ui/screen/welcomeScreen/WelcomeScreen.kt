@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +20,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
+import com.amadev.juniormath.ui.theme.VerticalGradientBrush
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 
 @AndroidEntryPoint
 class WelcomeScreen : Fragment() {
@@ -48,14 +48,14 @@ class WelcomeScreen : Fragment() {
     }
 
 
-
-    private fun navigateToLoginScreen(){
+    private fun navigateToLoginScreen() {
         Handler(Looper.myLooper()!!).postDelayed({
             findNavController().navigate(R.id.action_welcomeScreen_to_loginScreenFragment)
         }, 2500)
     }
 
 
+    @Preview
     @Composable
     fun WelcomeScreen() {
         Scaffold {
@@ -63,7 +63,7 @@ class WelcomeScreen : Fragment() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .background(color = MaterialTheme.colors.background),
+                    .background(brush = VerticalGradientBrush),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             )

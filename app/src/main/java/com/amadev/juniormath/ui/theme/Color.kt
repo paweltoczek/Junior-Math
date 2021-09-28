@@ -1,5 +1,6 @@
 package com.amadev.juniormath.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Purple200 = Color(0xFFBB86FC)
@@ -12,3 +13,10 @@ val WarmBlack500 = Color(0xFF034748)
 val RichBlack700 = Color(0xFF001021)
 val CyanProcess = Color(0xFF11b5e4)
 val CeruleanCrayola = Color(0xFF0caadc)
+
+val VerticalGradientBrush = Brush.verticalGradient(
+    colors = listOf(
+        Color(0xff96DEDA),
+        Color(0xff50C9C3)
+    )
+)

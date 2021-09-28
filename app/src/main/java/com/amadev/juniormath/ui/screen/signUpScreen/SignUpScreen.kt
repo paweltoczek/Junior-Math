@@ -1,5 +1,4 @@
-package com.amadev.juniormath.ui.screen.loginScreen
-
+package com.amadev.juniormath.ui.screen.signUpScreen
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,11 +21,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.ui.theme.VerticalGradientBrush
@@ -34,9 +33,9 @@ import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginScreenFragment : Fragment() {
+class SignUpScreen : Fragment() {
 
-    private val loginScreenViewModel: LoginScreenViewModel by viewModels()
+    private val signUpScreenViewModel: SignUpScreenViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,50 +43,39 @@ class LoginScreenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
-            setUpViewModel()
-            setUpObservers()
-
             setContent {
-                LoginScreen()
+                setUpObservers()
+                SignUpScreen()
             }
         }
-    }
-
-    private fun navigateToSignUpScreen() {
-        findNavController().navigate(R.id.action_loginScreenFragment_to_signUpScreen)
     }
 
     private fun setUpObservers() {
-        loginScreenViewModel.apply {
-            popUpMessage.observe(viewLifecycleOwner) {
-                showSnackBar(requireView(), it)
-            }
-            loginAutomatically.observe(viewLifecycleOwner) {
-
-            }
+        signUpScreenViewModel.popUpMessage.observe(viewLifecycleOwner) {
+            showSnackBar(requireView(), it)
         }
     }
 
-    private fun setUpViewModel() {
-        loginScreenViewModel.apply {
-            loginAutomaticallyIfPossible()
-        }
-    }
 
+    @Preview
     @Composable
-    fun LoginScreen() {
+    fun SignUpScreen() {
 
-        val emailInputErrorTextState = loginScreenViewModel.emailInputErrorTextState.value
-        val emailInputErrorTextValue = loginScreenViewModel.emailInputErrorTextValue.value
-        val passwordInputErrorTextState = loginScreenViewModel.passwordInputErrorTextState.value
-        val passwordInputErrorTextValue = loginScreenViewModel.passwordInputErrorTextValue.value
+        val emailInputErrorTextState = signUpScreenViewModel.emailInputErrorTextState.value
+        val emailInputErrorTextValue = signUpScreenViewModel.emailInputErrorTextValue.value
+
+        val passwordInputErrorTextState = signUpScreenViewModel.passwordInputErrorTextState.value
+        val passwordInputErrorTextValue = signUpScreenViewModel.passwordInputErrorTextValue.value
+
+        val repeatPasswordInputErrorTextState =
+            signUpScreenViewModel.repeatPasswordInputErrorTextState.value
+        val repeatPasswordInputErrorTextValue =
+            signUpScreenViewModel.repeatPasswordInputErrorTextValue.value
 
         JuniorMathTheme {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(brush = VerticalGradientBrush)
-            ) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(brush = VerticalGradientBrush)) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -107,7 +95,7 @@ class LoginScreenFragment : Fragment() {
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            TitleText(text = stringResource(id = R.string.login))
+                            TitleText(text = stringResource(id = R.string.createAccount))
                         }
 
                         EmailTextField()
@@ -118,16 +106,19 @@ class LoginScreenFragment : Fragment() {
                         if (passwordInputErrorTextState) {
                             ErrorText(passwordInputErrorTextValue)
                         }
-                        ForgotPasswordButton()
+                        RepeatPasswordTextField()
+                        if (repeatPasswordInputErrorTextState) {
+                            ErrorText(repeatPasswordInputErrorTextValue)
+                        }
 
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(0.dp, 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            SkipButton()
-                            LoginButton()
+//                            SkipButton()
+                            SignUpButton()
                         }
                     }
                     Column(
@@ -136,7 +127,7 @@ class LoginScreenFragment : Fragment() {
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        SignUpButton()
+//                        SignUp()
                     }
                 }
             }
@@ -177,14 +168,14 @@ class LoginScreenFragment : Fragment() {
 
     @Composable
     fun EmailTextField() {
-        val input = loginScreenViewModel.emailInput.value
+        val input = signUpScreenViewModel.emailInput.value
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 8.dp),
             value = input,
             onValueChange = { email ->
-                loginScreenViewModel.onEmailInputChanged(email)
+                signUpScreenViewModel.onEmailInputChanged(email)
             },
             label = { Text("Email") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -199,14 +190,14 @@ class LoginScreenFragment : Fragment() {
 
     @Composable
     fun PasswordTextField() {
-        val input = loginScreenViewModel.passwordInput.value
+        val input = signUpScreenViewModel.passwordInput.value
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 8.dp),
             value = input,
             onValueChange = { password ->
-                loginScreenViewModel.onPasswordInputChanged(password)
+                signUpScreenViewModel.onPasswordInputChanged(password)
             },
             label = { Text("Password") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -221,12 +212,35 @@ class LoginScreenFragment : Fragment() {
     }
 
     @Composable
-    fun LoginButton() {
-        var loginBtnState = loginScreenViewModel.loginButtonState.value
+    fun RepeatPasswordTextField() {
+        val input = signUpScreenViewModel.repeatPasswordInput.value
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 8.dp),
+            value = input,
+            onValueChange = { password ->
+                signUpScreenViewModel.onRepeatPasswordInputChanged(password)
+            },
+            label = { Text("Repeat password") },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colors.primary,
+                unfocusedBorderColor = MaterialTheme.colors.secondary
+            ),
+            textStyle = MaterialTheme.typography.body1,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            singleLine = true
+        )
+    }
+
+    @Composable
+    fun SignUpButton() {
+        var signUpBtnState = signUpScreenViewModel.signUpButtonState.value
         Button(
             onClick = {
-                loginBtnState = !loginBtnState
-                loginScreenViewModel.validateInput()
+                signUpBtnState = !signUpBtnState
+                signUpScreenViewModel.validateInput()
             },
             modifier = Modifier
                 .animateContentSize(
@@ -237,7 +251,7 @@ class LoginScreenFragment : Fragment() {
                 ),
             shape = RoundedCornerShape(5.dp),
         ) {
-            if (!loginBtnState) Text(text = stringResource(id = R.string.login)) else
+            if (!signUpBtnState) Text(text = stringResource(id = R.string.signUp)) else
                 Column(
                     horizontalAlignment =
                     Alignment.CenterHorizontally
@@ -251,41 +265,5 @@ class LoginScreenFragment : Fragment() {
                 }
         }
     }
-
-    @Composable
-    fun ForgotPasswordButton() {
-        TextButton(
-            onClick = {},
-            modifier = Modifier.background(Color.Transparent),
-            shape = RoundedCornerShape(5.dp)
-        ) {
-            Text(text = stringResource(id = R.string.forgotPassword), fontSize = 12.sp)
-        }
-    }
-
-    @Composable
-    fun SkipButton() {
-        TextButton(
-            onClick = {},
-            modifier = Modifier
-                .background(Color.Transparent),
-            shape = RoundedCornerShape(5.dp)
-        ) {
-            Text(text = stringResource(id = R.string.skip))
-        }
-    }
-
-    @Composable
-    fun SignUpButton() {
-        TextButton(
-            onClick = { navigateToSignUpScreen() },
-            modifier = Modifier
-                .background(Color.Transparent),
-            shape = RoundedCornerShape(5.dp)
-        ) {
-            Text(stringResource(id = R.string.signUp))
-        }
-    }
-
 
 }

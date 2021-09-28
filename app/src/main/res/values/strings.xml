@@ -6,4 +6,10 @@
     <string name="signUp">Sign Up</string>
     <string name="pleaseVerifyEmailSent">Please verify email sent</string>
     <string name="failedToLogIn">Failed to login</string>
+    <string name="skip">Skip</string>
+    <string name="passwordsMustBeSame">Passwords must be the same</string>
+    <string name="verificationEmailSent">Verification email has been sent</string>
+    <string name="failedToCreateAccount">Failed to create account</string>
+    <string name="createAccount">Create account</string>
+    <string name="forgotPassword">Forgot password?</string>
 </resources>
