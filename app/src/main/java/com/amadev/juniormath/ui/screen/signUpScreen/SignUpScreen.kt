@@ -8,6 +8,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.amadev.juniormath.R
+import com.amadev.juniormath.ui.screen.components.errorText.ErrorText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.ui.theme.VerticalGradientBrush
 import com.amadev.juniormath.util.Util.showSnackBar
@@ -117,7 +119,6 @@ class SignUpScreen : Fragment() {
                                 .padding(0.dp, 8.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
-//                            SkipButton()
                             SignUpButton()
                         }
                     }
@@ -127,7 +128,6 @@ class SignUpScreen : Fragment() {
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-//                        SignUp()
                     }
                 }
             }
@@ -155,16 +155,6 @@ class SignUpScreen : Fragment() {
         )
     }
 
-    @Composable
-    fun ErrorText(errorText: String) {
-        Text(
-            text = errorText,
-            color = Color.Red,
-            style = MaterialTheme.typography.subtitle1,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
 
     @Composable
     fun EmailTextField() {
@@ -172,7 +162,8 @@ class SignUpScreen : Fragment() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, 8.dp),
+                .padding(0.dp, 8.dp)
+                .focusable(true),
             value = input,
             onValueChange = { email ->
                 signUpScreenViewModel.onEmailInputChanged(email)
@@ -194,7 +185,8 @@ class SignUpScreen : Fragment() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, 8.dp),
+                .padding(0.dp, 8.dp)
+                .focusable(true),
             value = input,
             onValueChange = { password ->
                 signUpScreenViewModel.onPasswordInputChanged(password)
@@ -217,7 +209,8 @@ class SignUpScreen : Fragment() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, 8.dp),
+                .padding(0.dp, 8.dp)
+                .focusable(true),
             value = input,
             onValueChange = { password ->
                 signUpScreenViewModel.onRepeatPasswordInputChanged(password)

@@ -9,6 +9,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,6 +29,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
+import com.amadev.juniormath.ui.screen.components.errorText.ErrorText
+import com.amadev.juniormath.ui.screen.dialogs.forgotPasswordDialog.ForgotPasswordDialog
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.ui.theme.VerticalGradientBrush
 import com.amadev.juniormath.util.Util.showSnackBar
@@ -165,23 +168,13 @@ class LoginScreenFragment : Fragment() {
     }
 
     @Composable
-    fun ErrorText(errorText: String) {
-        Text(
-            text = errorText,
-            color = Color.Red,
-            style = MaterialTheme.typography.subtitle1,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-
-    @Composable
     fun EmailTextField() {
         val input = loginScreenViewModel.emailInput.value
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, 8.dp),
+                .padding(0.dp, 8.dp)
+                .focusable(true),
             value = input,
             onValueChange = { email ->
                 loginScreenViewModel.onEmailInputChanged(email)
@@ -193,8 +186,10 @@ class LoginScreenFragment : Fragment() {
             ),
             textStyle = MaterialTheme.typography.body1,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true
-        )
+            singleLine = true,
+
+
+            )
     }
 
     @Composable
@@ -203,7 +198,8 @@ class LoginScreenFragment : Fragment() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, 8.dp),
+                .padding(0.dp, 8.dp)
+                .focusable(true),
             value = input,
             onValueChange = { password ->
                 loginScreenViewModel.onPasswordInputChanged(password)
@@ -254,8 +250,9 @@ class LoginScreenFragment : Fragment() {
 
     @Composable
     fun ForgotPasswordButton() {
+
         TextButton(
-            onClick = {},
+            onClick = { showForgotPasswordDialog() },
             modifier = Modifier.background(Color.Transparent),
             shape = RoundedCornerShape(5.dp)
         ) {
@@ -287,5 +284,10 @@ class LoginScreenFragment : Fragment() {
         }
     }
 
+
+    fun showForgotPasswordDialog() {
+        val forgotPasswordDialog = ForgotPasswordDialog()
+        forgotPasswordDialog.show(childFragmentManager, null)
+    }
 
 }
