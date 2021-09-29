@@ -41,7 +41,7 @@ class ForgotPasswordDialog : DialogFragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-
+                ForgotPasswordDialogScreen()
             }
         }
     }
@@ -58,7 +58,9 @@ class ForgotPasswordDialog : DialogFragment() {
             Column(
                 modifier = Modifier
                     .background(Color.White)
-                    .size(300.dp, 200.dp),
+                    .wrapContentWidth()
+                    .wrapContentHeight()
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -73,7 +75,7 @@ class ForgotPasswordDialog : DialogFragment() {
                         .padding(0.dp, 8.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    SignUpButton()
+                    SendEmailButton()
                 }
             }
         }
@@ -113,7 +115,7 @@ class ForgotPasswordDialog : DialogFragment() {
     }
 
     @Composable
-    fun SignUpButton() {
+    fun SendEmailButton() {
         var signUpBtnState = forgotPasswordDialogViewModel.sendEmailButtonState.value
         Button(
             onClick = {
@@ -129,7 +131,7 @@ class ForgotPasswordDialog : DialogFragment() {
                 ),
             shape = RoundedCornerShape(5.dp),
         ) {
-            if (!signUpBtnState) Text(text = stringResource(id = R.string.signUp)) else
+            if (!signUpBtnState) Text(text = stringResource(id = R.string.sendEmail)) else
                 Column(
                     horizontalAlignment =
                     Alignment.CenterHorizontally

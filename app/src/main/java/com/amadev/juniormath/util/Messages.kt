@@ -2,7 +2,6 @@ package com.amadev.juniormath.util
 
 import android.content.Context
 import com.amadev.juniormath.R
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 sealed class Messages {
@@ -14,6 +13,7 @@ sealed class Messages {
     object PleaseVerifyEmailSent : Messages()
     object VerificationEmailSent : Messages()
     object FailedToCreateAccount : Messages()
+    object EmailSent : Messages()
     object LoginFailed : Messages()
 }
 
@@ -35,6 +35,9 @@ interface ProvideMessage {
     val verificationEmailSent: Messages.VerificationEmailSent
         get() = Messages.VerificationEmailSent
 
+    val emailSent: Messages.EmailSent
+        get() = Messages.EmailSent
+
     fun getMessage(message: Messages, context: Context) =
         when (message) {
             is Messages.FieldCantBeEmpty -> context.getString(R.string.fieldCantBeEmpty)
@@ -44,6 +47,7 @@ interface ProvideMessage {
             is Messages.PasswordsMustBeSame -> context.getString(R.string.passwordsMustBeSame)
             is Messages.VerificationEmailSent -> context.getString(R.string.verificationEmailSent)
             is Messages.FailedToCreateAccount -> context.getString(R.string.failedToCreateAccount)
+            is Messages.EmailSent -> context.getString(R.string.emailSent)
             else -> ""
         }
 }
