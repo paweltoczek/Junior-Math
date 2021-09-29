@@ -14,4 +14,9 @@
     <string name="forgotPassword">Forgot password?</string>
     <string name="sendEmail">Send email</string>
     <string name="emailSent">Email sent</string>
+    <string name="selectCategory">Select category</string>
+    <string name="addition">Addition</string>
+    <string name="subtraction">Subtraction</string>
+    <string name="multiplication">Multiplication</string>
+    <string name="division">Division</string>
 </resources>

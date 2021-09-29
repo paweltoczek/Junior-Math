@@ -84,6 +84,7 @@ class LoginScreenViewModel @Inject constructor(
                             loginButtonState.value = false
                         } else {
                             loginAutomatically.value = true
+                            loginButtonState.value = false
                         }
                     }
                 } else if (it.isSuccessful.not()) {

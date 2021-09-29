@@ -7,8 +7,6 @@ import com.amadev.juniormath.R
 sealed class Messages {
     object FieldCantBeEmpty : Messages()
     object InvalidEmail : Messages()
-    object EmailAlreadyExists : Messages()
-    object PasswordIsToWeak : Messages()
     object PasswordsMustBeSame : Messages()
     object PleaseVerifyEmailSent : Messages()
     object VerificationEmailSent : Messages()
@@ -38,6 +36,9 @@ interface ProvideMessage {
     val emailSent: Messages.EmailSent
         get() = Messages.EmailSent
 
+    val pleaseVerifyEmailSent: Messages.PleaseVerifyEmailSent
+        get() = Messages.PleaseVerifyEmailSent
+
     fun getMessage(message: Messages, context: Context) =
         when (message) {
             is Messages.FieldCantBeEmpty -> context.getString(R.string.fieldCantBeEmpty)
@@ -48,7 +49,7 @@ interface ProvideMessage {
             is Messages.VerificationEmailSent -> context.getString(R.string.verificationEmailSent)
             is Messages.FailedToCreateAccount -> context.getString(R.string.failedToCreateAccount)
             is Messages.EmailSent -> context.getString(R.string.emailSent)
-            else -> ""
+            is Messages.PleaseVerifyEmailSent -> context.getString(R.string.pleaseVerifyEmailSent)
         }
 }
 

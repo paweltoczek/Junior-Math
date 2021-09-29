@@ -56,27 +56,6 @@ class LoginScreenFragment : Fragment() {
         }
     }
 
-    private fun navigateToSignUpScreen() {
-        findNavController().navigate(R.id.action_loginScreenFragment_to_signUpScreen)
-    }
-
-    private fun setUpObservers() {
-        loginScreenViewModel.apply {
-            popUpMessage.observe(viewLifecycleOwner) {
-                showSnackBar(requireView(), it)
-            }
-            loginAutomatically.observe(viewLifecycleOwner) {
-
-            }
-        }
-    }
-
-    private fun setUpViewModel() {
-        loginScreenViewModel.apply {
-            loginAutomaticallyIfPossible()
-        }
-    }
-
     @Composable
     fun LoginScreen() {
 
@@ -187,8 +166,6 @@ class LoginScreenFragment : Fragment() {
             textStyle = MaterialTheme.typography.body1,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true,
-
-
             )
     }
 
@@ -263,7 +240,7 @@ class LoginScreenFragment : Fragment() {
     @Composable
     fun SkipButton() {
         TextButton(
-            onClick = {},
+            onClick = { navigateToCategoryFragment() },
             modifier = Modifier
                 .background(Color.Transparent),
             shape = RoundedCornerShape(5.dp)
@@ -285,9 +262,35 @@ class LoginScreenFragment : Fragment() {
     }
 
 
-    fun showForgotPasswordDialog() {
+    private fun navigateToSignUpScreen() {
+        findNavController().navigate(R.id.action_loginScreenFragment_to_signUpScreen)
+    }
+
+    private fun navigateToCategoryFragment() {
+        findNavController().navigate(R.id.action_loginScreenFragment_to_categoryFragment)
+    }
+
+    private fun showForgotPasswordDialog() {
         val forgotPasswordDialog = ForgotPasswordDialog()
         forgotPasswordDialog.show(childFragmentManager, null)
     }
 
+
+    private fun setUpObservers() {
+        loginScreenViewModel.apply {
+            popUpMessage.observe(viewLifecycleOwner) {
+                showSnackBar(requireView(), it)
+            }
+            loginAutomatically.observe(viewLifecycleOwner) {
+                navigateToCategoryFragment()
+            }
+        }
+    }
+
+
+    private fun setUpViewModel() {
+        loginScreenViewModel.apply {
+            loginAutomaticallyIfPossible()
+        }
+    }
 }

@@ -11,6 +11,9 @@
         <action
             android:id="@+id/action_welcomeScreen_to_loginScreenFragment"
             app:destination="@id/loginScreenFragment" />
+        <action
+            android:id="@+id/action_welcomeScreen_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginScreenFragment"
@@ -19,9 +22,20 @@
         <action
             android:id="@+id/action_loginScreenFragment_to_signUpScreen"
             app:destination="@id/signUpScreen" />
+        <action
+            android:id="@+id/action_loginScreenFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpScreen"
         android:name="com.amadev.juniormath.ui.screen.signUpScreen.SignUpScreen"
-        android:label="SignUpScreen" />
+        android:label="SignUpScreen" >
+        <action
+            android:id="@+id/action_signUpScreen_to_loginScreenFragment"
+            app:destination="@id/loginScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.amadev.juniormath.ui.screen.categoryScreen.CategoryFragment"
+        android:label="CategoryFragment" />
 </navigation>

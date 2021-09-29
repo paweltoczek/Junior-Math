@@ -27,6 +27,7 @@ import androidx.fragment.app.viewModels
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.screen.components.errorText.ErrorText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
+import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,8 +41,18 @@ class ForgotPasswordDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+
+            setUpObservers()
             setContent {
                 ForgotPasswordDialogScreen()
+            }
+        }
+    }
+
+    private fun setUpObservers() {
+        forgotPasswordDialogViewModel.apply {
+            popUpMessage.observe(viewLifecycleOwner) {
+                showSnackBar(requireView(), it)
             }
         }
     }
