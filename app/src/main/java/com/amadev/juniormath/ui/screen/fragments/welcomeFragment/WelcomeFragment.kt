@@ -1,8 +1,6 @@
-package com.amadev.juniormath.ui.screen.welcomeScreen
+package com.amadev.juniormath.ui.screen.fragments.welcomeFragment
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +9,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,14 +25,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
-import com.amadev.juniormath.ui.theme.VerticalGradientBrush
 import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WelcomeScreen : Fragment() {
+class WelcomeFragment : Fragment() {
 
-    private val welcomeScreenViewModel: WelcomeScreenViewModel by viewModels()
+    private val welcomeScreenViewModel: WelcomeFragmentViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,7 +82,7 @@ class WelcomeScreen : Fragment() {
     }
 
     private fun navigateToCategoryFragment() {
-        findNavController().navigate(R.id.action_welcomeScreen_to_categoryFragment)
+        findNavController().navigate(R.id.action_welcomeScreen_to_homeFragment)
     }
 
     @Preview
@@ -96,19 +93,22 @@ class WelcomeScreen : Fragment() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .background(brush = VerticalGradientBrush),
+                    .background(color = MaterialTheme.colors.background),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             )
             {
                 Text(
                     text = stringResource(R.string.app_name),
-                    fontSize = 32.sp,
+                    style = MaterialTheme.typography.body1,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    fontSize = 32.sp,
+                    color = MaterialTheme.colors.onSurface
                 )
             }
         }
     }
+
+
 
 }

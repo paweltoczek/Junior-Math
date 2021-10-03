@@ -49,10 +49,15 @@ class ForgotPasswordDialog : DialogFragment() {
         }
     }
 
+    private fun closeDialog() {
+        dialog?.dismiss()
+    }
+
     private fun setUpObservers() {
         forgotPasswordDialogViewModel.apply {
             popUpMessage.observe(viewLifecycleOwner) {
                 showSnackBar(requireView(), it)
+                closeDialog()
             }
         }
     }
@@ -68,7 +73,7 @@ class ForgotPasswordDialog : DialogFragment() {
         JuniorMathTheme {
             Column(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(color = MaterialTheme.colors.background)
                     .wrapContentWidth()
                     .wrapContentHeight()
                     .padding(24.dp),
@@ -112,7 +117,7 @@ class ForgotPasswordDialog : DialogFragment() {
             onValueChange = { email ->
                 forgotPasswordDialogViewModel.onEmailInputChanged(email)
             },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.email)) },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colors.primary,
                 unfocusedBorderColor = MaterialTheme.colors.secondary

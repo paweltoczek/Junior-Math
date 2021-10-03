@@ -1,22 +1,14 @@
 package com.amadev.juniormath.ui.theme
 
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+//
+//val Purple200 = Color(0xFFBB86FC)
+//val Purple500 = Color(0xFF6200EE)
+//val Purple700 = Color(0xFF3700B3)
+//val Teal200 = Color(0xFF03DAC5)
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
 
-val StartCommand200 = Color(0xFF1481ba)
-val WarmBlack500 = Color(0xFF034748)
-val RichBlack700 = Color(0xFF001021)
-val CyanProcess = Color(0xFF11b5e4)
-val CeruleanCrayola = Color(0xFF0caadc)
-
-val VerticalGradientBrush = Brush.verticalGradient(
-    colors = listOf(
-        Color(0xff96DEDA),
-        Color(0xff50C9C3)
-    )
-)
+val PrimaryColorLight = Color(0xFF9400D3)
+val SecondaryColor = Color(0xFFd9d9d9)
+val PrimaryColorDark = Color(0xFF5422cb)
+val PrimaryVariant = Color(0xffc382ff)

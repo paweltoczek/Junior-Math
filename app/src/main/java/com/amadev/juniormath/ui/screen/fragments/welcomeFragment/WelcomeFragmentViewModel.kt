@@ -1,4 +1,4 @@
-package com.amadev.juniormath.ui.screen.welcomeScreen
+package com.amadev.juniormath.ui.screen.fragments.welcomeFragment
 
 import android.content.Context
 import android.os.Handler
@@ -12,7 +12,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel
-class WelcomeScreenViewModel @Inject constructor(
+class WelcomeFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseAuth: FirebaseAuth
 ) :
@@ -29,7 +29,6 @@ class WelcomeScreenViewModel @Inject constructor(
     fun loginAutomaticallyIfPossible() {
         if (currentUser != null) {
             if (currentUser.isEmailVerified.not()) {
-                _popUpMessage.value = getMessage(pleaseVerifyEmailSent, context)
                 _loginAutomaticallyIfPossible.value = false
             } else {
                 Handler(Looper.myLooper()!!).postDelayed({

@@ -1,4 +1,4 @@
-package com.amadev.juniormath.ui.screen.loginScreen
+package com.amadev.juniormath.ui.screen.fragments.loginFragment
 
 
 import android.os.Bundle
@@ -20,9 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -32,14 +32,13 @@ import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.screen.components.errorText.ErrorText
 import com.amadev.juniormath.ui.screen.dialogs.forgotPasswordDialog.ForgotPasswordDialog
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
-import com.amadev.juniormath.ui.theme.VerticalGradientBrush
 import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginScreenFragment : Fragment() {
+class LoginFragment : Fragment() {
 
-    private val loginScreenViewModel: LoginScreenViewModel by viewModels()
+    private val loginScreenViewModel: LoginFragmentViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +55,7 @@ class LoginScreenFragment : Fragment() {
         }
     }
 
+    @Preview
     @Composable
     fun LoginScreen() {
 
@@ -68,7 +68,7 @@ class LoginScreenFragment : Fragment() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(brush = VerticalGradientBrush)
+                    .background(color = MaterialTheme.colors.background)
             ) {
                 Column(
                     modifier = Modifier
@@ -76,22 +76,17 @@ class LoginScreenFragment : Fragment() {
                         .fillMaxHeight()
                         .padding(32.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.Start,
                 ) {
-                    AppNameText(text = stringResource(id = R.string.app_name))
-
-
+                    Column {
+                        LoginText()
+                        SubText()
+                    }
                     Column(
-                        modifier = Modifier.wrapContentHeight(),
-                        horizontalAlignment = Alignment.End
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            TitleText(text = stringResource(id = R.string.login))
-                        }
-
                         EmailTextField()
                         if (emailInputErrorTextState) {
                             ErrorText(emailInputErrorTextValue)
@@ -100,7 +95,17 @@ class LoginScreenFragment : Fragment() {
                         if (passwordInputErrorTextState) {
                             ErrorText(passwordInputErrorTextValue)
                         }
-                        ForgotPasswordButton()
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            ForgotPasswordButton()
+                        }
+
+                        LoginButton()
+                        SkipButton()
+
 
                         Row(
                             modifier = Modifier
@@ -108,8 +113,6 @@ class LoginScreenFragment : Fragment() {
                                 .padding(0.dp, 8.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            SkipButton()
-                            LoginButton()
                         }
                     }
                     Column(
@@ -118,7 +121,14 @@ class LoginScreenFragment : Fragment() {
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        SignUpButton()
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RegisterText()
+                            SignUpButton()
+                        }
                     }
                 }
             }
@@ -126,23 +136,37 @@ class LoginScreenFragment : Fragment() {
     }
 
     @Composable
-    fun AppNameText(text: String) {
+    fun LoginText() {
         Text(
+            text = stringResource(id = R.string.login),
             modifier = Modifier.padding(8.dp),
-            text = text,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
+            style = MaterialTheme.typography.body1,
+            fontSize = 24.sp,
+            color = MaterialTheme.colors.onSurface
         )
     }
 
     @Composable
-    fun TitleText(text: String) {
+    fun SubText() {
         Text(
-            modifier = Modifier.padding(12.dp),
-            text = text,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            modifier = Modifier
+                .padding(12.dp)
+                .width(250.dp),
+            text = stringResource(id = R.string.weAreGlad),
+            style = MaterialTheme.typography.body2,
+            fontSize = 14.sp,
+            color = MaterialTheme.colors.onSurface
+        )
+    }
+
+    @Composable
+    fun RegisterText() {
+        Text(
+            modifier = Modifier,
+            text = stringResource(id = R.string.dontHaveAccount),
+            style = MaterialTheme.typography.body1,
+            fontSize = 12.sp,
+            color = MaterialTheme.colors.onSurface
         )
     }
 
@@ -161,12 +185,13 @@ class LoginScreenFragment : Fragment() {
             label = { Text("Email") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.secondary
+                unfocusedBorderColor = MaterialTheme.colors.secondary,
+                textColor = MaterialTheme.colors.primary
             ),
-            textStyle = MaterialTheme.typography.body1,
+            textStyle = MaterialTheme.typography.h1,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true,
-            )
+            singleLine = true
+        )
     }
 
     @Composable
@@ -184,9 +209,10 @@ class LoginScreenFragment : Fragment() {
             label = { Text("Password") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.secondary
+                unfocusedBorderColor = MaterialTheme.colors.secondary,
+                textColor = MaterialTheme.colors.primary
             ),
-            textStyle = MaterialTheme.typography.body1,
+            textStyle = MaterialTheme.typography.h1,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true
@@ -202,6 +228,8 @@ class LoginScreenFragment : Fragment() {
                 loginScreenViewModel.validateInput()
             },
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 8.dp)
                 .animateContentSize(
                     animationSpec = tween(
                         300,
@@ -231,9 +259,13 @@ class LoginScreenFragment : Fragment() {
         TextButton(
             onClick = { showForgotPasswordDialog() },
             modifier = Modifier.background(Color.Transparent),
-            shape = RoundedCornerShape(5.dp)
+            shape = RoundedCornerShape(5.dp),
         ) {
-            Text(text = stringResource(id = R.string.forgotPassword), fontSize = 12.sp)
+            Text(
+                text = stringResource(id = R.string.forgotPassword),
+                fontSize = 12.sp,
+                color = Color.Black
+            )
         }
     }
 
@@ -242,10 +274,11 @@ class LoginScreenFragment : Fragment() {
         TextButton(
             onClick = { navigateToCategoryFragment() },
             modifier = Modifier
-                .background(Color.Transparent),
+                .background(Color.Transparent)
+                .padding(0.dp, 8.dp),
             shape = RoundedCornerShape(5.dp)
         ) {
-            Text(text = stringResource(id = R.string.skip))
+            Text(text = stringResource(id = R.string.skip), color = MaterialTheme.colors.primary)
         }
     }
 
@@ -257,7 +290,7 @@ class LoginScreenFragment : Fragment() {
                 .background(Color.Transparent),
             shape = RoundedCornerShape(5.dp)
         ) {
-            Text(stringResource(id = R.string.signUp))
+            Text(stringResource(id = R.string.signUp), color = MaterialTheme.colors.primary)
         }
     }
 
@@ -267,7 +300,7 @@ class LoginScreenFragment : Fragment() {
     }
 
     private fun navigateToCategoryFragment() {
-        findNavController().navigate(R.id.action_loginScreenFragment_to_categoryFragment)
+        findNavController().navigate(R.id.action_loginScreenFragment_to_homeFragment)
     }
 
     private fun showForgotPasswordDialog() {

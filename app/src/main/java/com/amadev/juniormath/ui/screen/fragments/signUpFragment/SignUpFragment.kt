@@ -1,9 +1,10 @@
-package com.amadev.juniormath.ui.screen.signUpScreen
+package com.amadev.juniormath.ui.screen.fragments.signUpFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -19,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,29 +27,37 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
+import com.amadev.juniormath.ui.screen.components.emailSent.EmailSent
 import com.amadev.juniormath.ui.screen.components.errorText.ErrorText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
-import com.amadev.juniormath.ui.theme.VerticalGradientBrush
 import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SignUpScreen : Fragment() {
+class SignUpFragment : Fragment() {
 
     private val signUpScreenViewModel: SignUpScreenViewModel by viewModels()
 
+    @ExperimentalAnimationApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+
+            setUpObservers()
+
             setContent {
-                setUpObservers()
                 SignUpScreen()
             }
         }
+    }
+
+    private fun navigateToLoginFragment() {
+        findNavController().navigate(R.id.action_signUpScreen_to_loginScreenFragment)
     }
 
     private fun setUpObservers() {
@@ -63,6 +71,8 @@ class SignUpScreen : Fragment() {
     @Composable
     fun SignUpScreen() {
 
+        val verificationEmailSentState = signUpScreenViewModel.verificationEmailSentState.value
+
         val emailInputErrorTextState = signUpScreenViewModel.emailInputErrorTextState.value
         val emailInputErrorTextValue = signUpScreenViewModel.emailInputErrorTextValue.value
 
@@ -75,83 +85,111 @@ class SignUpScreen : Fragment() {
             signUpScreenViewModel.repeatPasswordInputErrorTextValue.value
 
         JuniorMathTheme {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(brush = VerticalGradientBrush)) {
-                Column(
+            if (!verificationEmailSentState) {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(32.dp),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colors.background)
                 ) {
-                    AppNameText(text = stringResource(id = R.string.app_name))
-
-
-                    Column(
-                        modifier = Modifier.wrapContentHeight(),
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            TitleText(text = stringResource(id = R.string.createAccount))
-                        }
-
-                        EmailTextField()
-                        if (emailInputErrorTextState) {
-                            ErrorText(emailInputErrorTextValue)
-                        }
-                        PasswordTextField()
-                        if (passwordInputErrorTextState) {
-                            ErrorText(passwordInputErrorTextValue)
-                        }
-                        RepeatPasswordTextField()
-                        if (repeatPasswordInputErrorTextState) {
-                            ErrorText(repeatPasswordInputErrorTextValue)
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(0.dp, 8.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            SignUpButton()
-                        }
-                    }
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .padding(32.dp),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.Start,
                     ) {
+                        Column {
+                            SignUpText()
+                            SubText()
+                        }
+
+                        Column(
+                            modifier = Modifier.wrapContentHeight(),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            EmailTextField()
+                            if (emailInputErrorTextState) {
+                                ErrorText(emailInputErrorTextValue)
+                            }
+                            PasswordTextField()
+                            if (passwordInputErrorTextState) {
+                                ErrorText(passwordInputErrorTextValue)
+                            }
+                            RepeatPasswordTextField()
+                            if (repeatPasswordInputErrorTextState) {
+                                ErrorText(repeatPasswordInputErrorTextValue)
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(0.dp, 8.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                SignUpButton()
+                            }
+                        }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                        }
                     }
+                }
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    EmailSent()
+                    GoToLoginFragment()
                 }
             }
         }
     }
 
     @Composable
-    fun AppNameText(text: String) {
+    fun GoToLoginFragment() {
+        TextButton(
+            onClick = { navigateToLoginFragment() },
+            modifier = Modifier
+                .background(Color.Transparent)
+                .padding(0.dp, 24.dp),
+            shape = RoundedCornerShape(5.dp),
+        ) {
+            Text(
+                text = stringResource(id = R.string.goToLoginPage),
+                fontSize = 18.sp,
+                color = MaterialTheme.colors.primary
+            )
+        }
+    }
+
+    @Composable
+    fun SignUpText() {
         Text(
+            text = stringResource(id = R.string.signUp),
             modifier = Modifier.padding(8.dp),
-            text = text,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
+            style = MaterialTheme.typography.body1,
+            fontSize = 24.sp,
+            color = MaterialTheme.colors.onSurface
         )
     }
 
     @Composable
-    fun TitleText(text: String) {
+    fun SubText() {
         Text(
-            modifier = Modifier.padding(12.dp),
-            text = text,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            modifier = Modifier
+                .padding(12.dp)
+                .width(250.dp),
+            text = stringResource(id = R.string.thankYou),
+            style = MaterialTheme.typography.body2,
+            fontSize = 14.sp,
+            color = MaterialTheme.colors.onSurface
         )
     }
 
@@ -171,9 +209,10 @@ class SignUpScreen : Fragment() {
             label = { Text("Email") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.secondary
+                unfocusedBorderColor = MaterialTheme.colors.secondary,
+                textColor = MaterialTheme.colors.primary
             ),
-            textStyle = MaterialTheme.typography.body1,
+            textStyle = MaterialTheme.typography.h1,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true
         )
@@ -194,9 +233,10 @@ class SignUpScreen : Fragment() {
             label = { Text("Password") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.secondary
+                unfocusedBorderColor = MaterialTheme.colors.secondary,
+                textColor = MaterialTheme.colors.primary
             ),
-            textStyle = MaterialTheme.typography.body1,
+            textStyle = MaterialTheme.typography.h1,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true
@@ -218,9 +258,10 @@ class SignUpScreen : Fragment() {
             label = { Text("Repeat password") },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.secondary
+                unfocusedBorderColor = MaterialTheme.colors.secondary,
+                textColor = MaterialTheme.colors.primary
             ),
-            textStyle = MaterialTheme.typography.body1,
+            textStyle = MaterialTheme.typography.h1,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true
@@ -236,11 +277,13 @@ class SignUpScreen : Fragment() {
                 signUpScreenViewModel.validateInput()
             },
             modifier = Modifier
+                .fillMaxWidth()
                 .animateContentSize(
                     animationSpec = tween(
                         300,
-                        easing = LinearOutSlowInEasing
-                    )
+                        easing = LinearOutSlowInEasing,
+
+                        )
                 ),
             shape = RoundedCornerShape(5.dp),
         ) {

@@ -1,4 +1,4 @@
-package com.amadev.juniormath.ui.screen.signUpScreen
+package com.amadev.juniormath.ui.screen.fragments.signUpFragment
 
 import android.content.Context
 import android.util.Patterns
@@ -34,6 +34,8 @@ class SignUpScreenViewModel @Inject constructor(
     val repeatPasswordInputErrorTextValue = mutableStateOf("")
 
     val signUpButtonState = mutableStateOf(false)
+
+    val verificationEmailSentState = mutableStateOf(false)
 
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
@@ -86,6 +88,7 @@ class SignUpScreenViewModel @Inject constructor(
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     sendVerificationEmail()
+                    verificationEmailSentState.value = true
                     signUpButtonState.value = false
                     _popUpMessage.value = getMessage(verificationEmailSent, context)
 

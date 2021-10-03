@@ -1,4 +1,4 @@
-package com.amadev.juniormath.ui.screen.loginScreen
+package com.amadev.juniormath.ui.screen.fragments.loginFragment
 
 import android.content.Context
 import android.util.Patterns
@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.amadev.juniormath.util.ProvideMessage
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthEmailException
 import com.google.firebase.auth.FirebaseAuthException
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor(
+class LoginFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseAuth: FirebaseAuth
 ) : ViewModel(), ProvideMessage {
@@ -100,6 +101,9 @@ class LoginScreenViewModel @Inject constructor(
                         loginButtonState.value = false
                         _popUpMessage.value = e.message
                     } catch (e: TimeoutException) {
+                        loginButtonState.value = false
+                        _popUpMessage.value = e.message
+                    } catch (e: FirebaseTooManyRequestsException) {
                         loginButtonState.value = false
                         _popUpMessage.value = e.message
                     }

@@ -19,4 +19,22 @@
     <string name="subtraction">Subtraction</string>
     <string name="multiplication">Multiplication</string>
     <string name="division">Division</string>
+    <string name="email">Email</string>
+    <string name="weAreGlad">Welcome in Junior Math. \nWe hope you will get only positive experiences using this app.</string>
+    <string name="dontHaveAccount">Don\'t have account?</string>
+    <string name="thankYou">Thank you. \nAfter loggin in you will be able to use functions, not allowed for not signed users.</string>
+    <string name="weSent">We have sent you verification \nemail</string>
+    <string name="checkYourEmail">Check your inbox</string>
+    <string name="goToLoginPage">Go to login page</string>
+    <string name="home">Home</string>
+    <string name="welcome">Welcome</string>
+    <string name="statistics">Statistics</string>
+    <string name="checkHowYour">Here,\nCheck your learning progress</string>
+    <string name="practice">Practice</string>
+    <string name="practiceMakesPerfect">Practices makes perfect.\nRemember to exceriese at least one hour a day</string>
+    <string name="hi">Hi\n</string>
+    <string name="whatYouWantToDo">What do you want to do?</string>
+    <string name="support">Support</string>
+    <string name="feedback">Feedback</string>
+    <string name="logout">Logout</string>
 </resources>
