@@ -56,6 +56,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+
     @Composable
     fun HomeScreen() {
         val scrollState = rememberScrollState()
@@ -92,8 +93,89 @@ class HomeFragment : Fragment() {
     @Preview
     @Composable
     fun NavDrawer() {
-        Column(modifier = Modifier.fillMaxSize()) {
+        JuniorMathTheme {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.surface),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .background(MaterialTheme.colors.secondary)
+                        .padding(24.dp, 24.dp),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(
+                        text = "Anna",
+                        color = MaterialTheme.colors.primary,
+                        style = MaterialTheme.typography.body1,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Text(
+                    modifier = Modifier.absolutePadding(24.dp, 24.dp),
+                    text = stringResource(id = R.string.whatYouWantToDo),
+                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.h3,
+                    fontSize = 18.sp
+                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .absolutePadding(0.dp, 24.dp),
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    NavButton(buttonText = stringResource(id = R.string.support))
+                    NavButton(buttonText = stringResource(id = R.string.feedback))
+                    NavButton(buttonText = stringResource(id = R.string.logout))
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp, 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    TermsOfUseText()
+                }
+            }
+        }
+    }
 
+    @Composable
+    fun TermsOfUseText() {
+        Text(
+            text = stringResource(id = R.string.termsOfUse),
+            style = MaterialTheme.typography.body1,
+            fontSize = 14.sp,
+            color = Color.Black
+        )
+    }
+
+    @Composable
+    fun NavButton(buttonText: String) {
+        Button(
+            onClick = {},
+            shape = RoundedCornerShape(50),
+            modifier = Modifier
+                .padding(24.dp, 12.dp)
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
+        ) {
+            Text(
+                text = buttonText,
+                color = Color.Black,
+                style = MaterialTheme.typography.h3,
+                fontSize = 16.sp
+            )
         }
     }
 
