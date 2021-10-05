@@ -37,5 +37,17 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.amadev.juniormath.ui.screen.fragments.homeFragment.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_rangeFragment"
+            app:destination="@id/rangeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/rangeFragment"
+        android:name="com.amadev.juniormath.ui.screen.fragments.rangeFragment.RangeFragment"
+        android:label="RangeFragment" >
+        <action
+            android:id="@+id/action_rangeFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

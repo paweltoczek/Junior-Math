@@ -39,4 +39,8 @@
     <string name="logout">Logout</string>
     <string name="termsOfUse"><![CDATA[Terms of use & Privacy policy]]></string>
     <string name="category">Category</string>
+    <string name="range">Range</string>
+    <string name="typeInThe">Type in the range of numers you want \nto practice with</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
 </resources>

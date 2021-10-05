@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.screen.components.statistics.StatisticsChart
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
@@ -41,6 +42,13 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
+
+    companion object {
+        const val ADDITION = "Addition"
+        const val SUBTRACTION = "Subtraction"
+        const val MULTIPLICATION = "Multipication"
+        const val DIVISION = "Division"
+    }
 
     val homeFragmentViewModel: HomeFragmentViewModel by viewModels()
 
@@ -163,7 +171,9 @@ class HomeFragment : Fragment() {
     @Composable
     fun NavButton(buttonText: String) {
         Button(
-            onClick = {},
+            onClick = {
+                findNavController().navigate(R.id.action_homeFragment_to_rangeFragment)
+            },
             shape = RoundedCornerShape(50),
             modifier = Modifier
                 .padding(24.dp, 12.dp)
@@ -207,17 +217,25 @@ class HomeFragment : Fragment() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
                         CategoryButton(
                             stringResource(id = R.string.addition),
-                            painterResource(R.drawable.addition)
+                            painterResource(R.drawable.addition),
+                            ADDITION
                         )
                     }
                     Spacer(modifier = Modifier.width(20.dp))
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
                         CategoryButton(
                             stringResource(id = R.string.subtraction),
-                            painterResource(R.drawable.subtraction)
+                            painterResource(R.drawable.subtraction),
+                            SUBTRACTION
                         )
                     }
                 }
@@ -226,18 +244,22 @@ class HomeFragment : Fragment() {
                         .fillMaxWidth()
                         .absolutePadding(0.dp, 32.dp),
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
                         CategoryButton(
                             stringResource(id = R.string.multiplication),
-                            painterResource(R.drawable.multiplication)
+                            painterResource(R.drawable.multiplication),
+                            MULTIPLICATION
                         )
                     }
                     Spacer(modifier = Modifier.width(20.dp))
-
                     Column(modifier = Modifier.weight(1f)) {
                         CategoryButton(
                             stringResource(id = R.string.division),
-                            painterResource(R.drawable.division)
+                            painterResource(R.drawable.division),
+                            DIVISION
                         )
                     }
                 }
@@ -321,14 +343,14 @@ class HomeFragment : Fragment() {
     }
 
     @Composable
-    fun CategoryButton(buttonText: String, icon: Painter) {
+    fun CategoryButton(buttonText: String, icon: Painter, categoryName: String) {
         Button(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary),
-            onClick = {},
+            onClick = { navigateToRangeFragment(categoryName) },
         ) {
             Column(
                 modifier = Modifier
@@ -352,6 +374,12 @@ class HomeFragment : Fragment() {
                 Text(text = buttonText, style = MaterialTheme.typography.body1, fontSize = 12.sp)
             }
         }
+    }
+
+    private fun navigateToRangeFragment(categoryName: String) {
+        val bundle = Bundle()
+        bundle.putString("category", categoryName)
+        findNavController().navigate(R.id.action_homeFragment_to_rangeFragment, bundle)
     }
 
 

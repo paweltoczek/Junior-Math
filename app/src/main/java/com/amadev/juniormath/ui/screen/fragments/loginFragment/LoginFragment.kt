@@ -12,13 +12,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -170,9 +173,11 @@ class LoginFragment : Fragment() {
         )
     }
 
+
     @Composable
     fun EmailTextField() {
         val input = loginScreenViewModel.emailInput.value
+        val focusManager = LocalFocusManager.current
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -190,6 +195,7 @@ class LoginFragment : Fragment() {
             ),
             textStyle = MaterialTheme.typography.h1,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardActions = KeyboardActions(onDone = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }),
             singleLine = true
         )
     }
