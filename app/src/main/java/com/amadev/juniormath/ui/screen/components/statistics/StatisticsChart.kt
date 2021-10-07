@@ -29,13 +29,13 @@ fun StatisticsChart() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ChartBlockWithDayName("Mon", (0..99).random())
-            ChartBlockWithDayName("Tue", (0..99).random())
-            ChartBlockWithDayName("Wed", (0..99).random())
-            ChartBlockWithDayName("Thu", (0..99).random())
-            ChartBlockWithDayName("Fri", (0..99).random())
-            ChartBlockWithDayName("Sat", (0..99).random())
-            ChartBlockWithDayName("Sun", (0..99).random())
+            ChartBlockWithDayName("Mon", (0..80).random())
+            ChartBlockWithDayName("Tue", (0..80).random())
+            ChartBlockWithDayName("Wed", (0..80).random())
+            ChartBlockWithDayName("Thu", (0..80).random())
+            ChartBlockWithDayName("Fri", (0..80).random())
+            ChartBlockWithDayName("Sat", (0..80).random())
+            ChartBlockWithDayName("Sun", (0..80).random())
         }
     }
 

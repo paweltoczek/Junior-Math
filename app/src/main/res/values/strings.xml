@@ -43,4 +43,6 @@
     <string name="typeInThe">Type in the range of numers you want \nto practice with</string>
     <string name="from">From</string>
     <string name="to">To</string>
+    <string name="answer">Answer</string>
+    <string name="accept">Accept</string>
 </resources>

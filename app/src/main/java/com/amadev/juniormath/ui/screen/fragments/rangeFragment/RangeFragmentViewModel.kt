@@ -9,8 +9,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RangeFragmentViewModel @Inject constructor() : ViewModel() {
 
-    val fromRangeInput = mutableStateOf("")
-    val toRangeInput = mutableStateOf("")
+    val fromRangeInput = mutableStateOf("1")
+    val toRangeInput = mutableStateOf("10")
 
     fun onFromRangeInputChanged(input: String) {
         fromRangeInput.value = input

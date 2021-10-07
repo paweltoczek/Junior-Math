@@ -49,5 +49,12 @@
         <action
             android:id="@+id/action_rangeFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_rangeFragment_to_practiceFragment"
+            app:destination="@id/practiceFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/practiceFragment"
+        android:name="com.amadev.juniormath.ui.screen.fragments.practiceFragment.PracticeFragment"
+        android:label="PracticeFragment" />
 </navigation>

@@ -16,17 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
+import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
+import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentTitleText
+import com.amadev.juniormath.ui.screen.components.titleTexts.SmallOverviewText
+import com.amadev.juniormath.ui.screen.components.titleTexts.SmallTitleText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,6 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class RangeFragment : Fragment() {
 
     private val rangeFragmentViewModel: RangeFragmentViewModel by viewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,6 +54,8 @@ class RangeFragment : Fragment() {
     @Composable
     fun RangeFragmentUI() {
         JuniorMathTheme {
+        val category = arguments?.getString("category")
+
             Column(
                 modifier = Modifier
                     .background(MaterialTheme.colors.surface)
@@ -63,8 +68,8 @@ class RangeFragment : Fragment() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    FragmentTitleText()
-                    SubTitleText()
+                    FragmentTitleText(stringResource(id = R.string.category))
+                    FragmentDescriptionText(category.toString())
                 }
 
                 Column(
@@ -72,9 +77,9 @@ class RangeFragment : Fragment() {
                         .fillMaxWidth()
                         .padding(32.dp, 0.dp)
                 ) {
-                    SmallTitleText()
+                    SmallTitleText(stringResource(id = R.string.range))
                     Spacer(modifier = Modifier.height(8.dp))
-                    SmallOverviewText()
+                    SmallOverviewText(stringResource(id = R.string.typeInThe))
                     Spacer(modifier = Modifier.height(24.dp))
                     FromRangeInputField()
                     Spacer(modifier = Modifier.height(24.dp))
@@ -92,10 +97,12 @@ class RangeFragment : Fragment() {
     @Composable
     fun GoToPracticeFragmentButton() {
         Button(
-            onClick = {},
+            onClick = {
+                navigateToPracticeFragment()
+            },
             modifier = Modifier
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(50),
+            shape = RoundedCornerShape(5.dp),
         ) {
             Text(text = stringResource(id = R.string.practice))
 
@@ -161,48 +168,13 @@ class RangeFragment : Fragment() {
         )
     }
 
-    @Composable
-    fun SmallOverviewText() {
-        Text(
-            text = stringResource(id = R.string.typeInThe),
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Light,
-            fontSize = 12.sp,
-            color = MaterialTheme.colors.onSurface
-        )
-    }
-
-    @Composable
-    fun SmallTitleText() {
-        Text(
-            text = stringResource(id = R.string.range),
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            color = MaterialTheme.colors.onSurface
-        )
-    }
-
-    @Composable
-    fun SubTitleText() {
+    private fun navigateToPracticeFragment() {
+        val bundle = Bundle()
         val category = arguments?.getString("category")
-        Text(
-            text = category.toString(),
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            color = MaterialTheme.colors.primary
-        )
-    }
 
-    @Composable
-    fun FragmentTitleText() {
-        Text(
-            text = stringResource(id = R.string.category),
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Bold,
-            fontSize = 28.sp,
-            color = MaterialTheme.colors.onSurface
-        )
+        bundle.putString("category", category.toString())
+        bundle.putInt("fromRange", rangeFragmentViewModel.fromRangeInput.value.toInt())
+        bundle.putInt("toRange", rangeFragmentViewModel.toRangeInput.value.toInt())
+        findNavController().navigate(R.id.action_rangeFragment_to_practiceFragment, bundle)
     }
 }

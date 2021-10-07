@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
     companion object {
         const val ADDITION = "Addition"
         const val SUBTRACTION = "Subtraction"
-        const val MULTIPLICATION = "Multipication"
+        const val MULTIPLICATION = "Multiplication"
         const val DIVISION = "Division"
     }
 
@@ -112,7 +112,7 @@ class HomeFragment : Fragment() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(250.dp)
+                        .weight(1f)
                         .background(MaterialTheme.colors.secondary)
                         .padding(24.dp, 24.dp),
                     horizontalAlignment = Alignment.Start,
@@ -126,33 +126,39 @@ class HomeFragment : Fragment() {
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Text(
-                    modifier = Modifier.absolutePadding(24.dp, 24.dp),
-                    text = stringResource(id = R.string.whatYouWantToDo),
-                    color = MaterialTheme.colors.onSurface,
-                    style = MaterialTheme.typography.h3,
-                    fontSize = 18.sp
-                )
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
-                        .absolutePadding(0.dp, 24.dp),
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    NavButton(buttonText = stringResource(id = R.string.support))
-                    NavButton(buttonText = stringResource(id = R.string.feedback))
-                    NavButton(buttonText = stringResource(id = R.string.logout))
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp, 24.dp),
+                        .weight(2f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    TermsOfUseText()
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            modifier = Modifier.absolutePadding(24.dp, 24.dp),
+                            text = stringResource(id = R.string.whatYouWantToDo),
+                            color = MaterialTheme.colors.onSurface,
+                            style = MaterialTheme.typography.h3,
+                            fontSize = 18.sp
+                        )
+                    }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        NavButton(buttonText = stringResource(id = R.string.support))
+                        NavButton(buttonText = stringResource(id = R.string.feedback))
+                        NavButton(buttonText = stringResource(id = R.string.logout))
+                    }
+                    Column {
+                        TermsOfUseText()
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
                 }
             }
         }
