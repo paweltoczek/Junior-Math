@@ -23,7 +23,7 @@ class RangeFragmentViewModel @Inject constructor() : ViewModel() {
         toRangeInput.value = input
             .replace(".", "")
             .replace(",", "")
-            .take(6)
+            .take(4)
     }
 
 

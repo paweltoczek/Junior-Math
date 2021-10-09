@@ -32,20 +32,10 @@ import com.amadev.juniormath.ui.theme.JuniorMathTheme
 @Composable
 fun CircleIndicator(
     canvasSize: Dp = 75.dp,
-    indicatorValue: Int = 0,
-    maxIndicatorValue: Int = 100,
     backgroundColor: Color = MaterialTheme.colors.secondary,
     foregroundColor: Color = MaterialTheme.colors.primary,
     questionNo: Int = 1
 ) {
-    var allowedIndicatorValue by remember {
-        mutableStateOf(maxIndicatorValue)
-    }
-    allowedIndicatorValue = if (indicatorValue <= maxIndicatorValue) {
-        indicatorValue
-    } else {
-        maxIndicatorValue
-    }
 
     val sweepAngle by animateFloatAsState(
         targetValue = questionNo.toFloat() * 24,

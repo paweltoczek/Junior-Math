@@ -45,4 +45,5 @@
     <string name="to">To</string>
     <string name="answer">Answer</string>
     <string name="accept">Accept</string>
+    <string name="selectYourAnswer">Select one answer</string>
 </resources>

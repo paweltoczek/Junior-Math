@@ -13,6 +13,7 @@ sealed class Messages {
     object FailedToCreateAccount : Messages()
     object EmailSent : Messages()
     object LoginFailed : Messages()
+    object SelectYourAnswer : Messages()
 }
 
 
@@ -39,6 +40,10 @@ interface ProvideMessage {
     val pleaseVerifyEmailSent: Messages.PleaseVerifyEmailSent
         get() = Messages.PleaseVerifyEmailSent
 
+    val selectYourAnswer: Messages.SelectYourAnswer
+        get() = Messages.SelectYourAnswer
+
+
     fun getMessage(message: Messages, context: Context) =
         when (message) {
             is Messages.FieldCantBeEmpty -> context.getString(R.string.fieldCantBeEmpty)
@@ -50,6 +55,7 @@ interface ProvideMessage {
             is Messages.FailedToCreateAccount -> context.getString(R.string.failedToCreateAccount)
             is Messages.EmailSent -> context.getString(R.string.emailSent)
             is Messages.PleaseVerifyEmailSent -> context.getString(R.string.pleaseVerifyEmailSent)
+            is Messages.SelectYourAnswer -> context.getString(R.string.selectYourAnswer)
         }
 }
 

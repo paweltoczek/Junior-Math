@@ -4,23 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -69,12 +71,9 @@ class PracticeFragment : Fragment() {
         practiceFragmentViewModel.setUpQuestionNumbers()
     }
 
-
-    @Preview
     @Composable
     fun PracticeScreenUi() {
         val category = arguments?.getString("category")
-
         JuniorMathTheme {
             Column(
                 modifier = Modifier
@@ -117,15 +116,15 @@ class PracticeFragment : Fragment() {
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Digit(text = practiceFragmentViewModel.questionNumberFirst.value.toString())
+                        QuestionDigit(text = practiceFragmentViewModel.questionNumberFirst.value)
                         Spacer(modifier = Modifier.width(16.dp))
                         Operator()
                         Spacer(modifier = Modifier.width(16.dp))
-                        Digit(text = practiceFragmentViewModel.questionNumberSecond.value.toString())
+                        QuestionDigit(text = practiceFragmentViewModel.questionNumberSecond.value)
                     }
-                    Row {
-                        AnswerInput()
-                    }
+                    EqualOperator()
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Answers()
                 }
                 Column(
                     modifier = Modifier
@@ -134,7 +133,7 @@ class PracticeFragment : Fragment() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Bottom
                 ) {
-                    NextQuestionButton()
+                    AcceptAnswerButton()
                 }
 
             }
@@ -142,10 +141,29 @@ class PracticeFragment : Fragment() {
     }
 
     @Composable
-    fun Digit(text: String) {
-        Text(
-            text = text, style = MaterialTheme.typography.body1,
-            fontSize = 32.sp,
+    fun EqualOperator() {
+        Row(modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "=",
+                style = MaterialTheme.typography.body1,
+                fontSize = 60.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colors.primary
+            )
+        }
+    }
+
+    @Composable
+    fun QuestionDigit(text: Int) {
+        val receivedValue by animateIntAsState(
+            targetValue = text,
+            animationSpec = tween(1000)
+        )
+
+        Text(text = "$receivedValue",
+            style = MaterialTheme.typography.body1,
+            fontSize = 48.sp,
             fontWeight = FontWeight.ExtraBold
         )
     }
@@ -163,50 +181,110 @@ class PracticeFragment : Fragment() {
     }
 
     @Composable
-    fun AnswerInput() {
-        val focusManager = LocalFocusManager.current
-        val input = practiceFragmentViewModel.userAnswerInput.value
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(64.dp, 12.dp),
-            value = input,
-            onValueChange = { answer ->
-                practiceFragmentViewModel
-                    .onAnswerInputChanged(answer)
-            },
-            label = { Text(stringResource(id = R.string.answer)) },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.secondary,
-                textColor = MaterialTheme.colors.onSurface
-            ),
-            textStyle = MaterialTheme.typography.h1.copy(
-                textAlign = TextAlign.Center,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-            singleLine = true,
-        )
-    }
-
-    @Composable
-    fun NextQuestionButton() {
+    fun AcceptAnswerButton() {
         Button(
             onClick = {
-                practiceFragmentViewModel.compareUserInputWithCorrectAnswer()
-
+                practiceFragmentViewModel.validateUserInput()
             },
             modifier = Modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(5.dp),
         ) {
             Text(text = stringResource(id = R.string.accept))
+        }
+    }
+
+    @Composable
+    fun Answers() {
+        val spaceBetweenButtons = 25.dp
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AnswerButton(
+                    practiceFragmentViewModel.button1State.value,
+                    practiceFragmentViewModel.button1State.toString(),
+                    practiceFragmentViewModel.button1Text.value
+                )
+                Spacer(modifier = Modifier.width(spaceBetweenButtons))
+                AnswerButton(
+                    practiceFragmentViewModel.button2State.value,
+                    practiceFragmentViewModel.button2State.toString(),
+                    practiceFragmentViewModel.button2Text.value
+                )
+            }
+            Spacer(modifier = Modifier.height(spaceBetweenButtons))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AnswerButton(
+                    practiceFragmentViewModel.button3State.value,
+                    practiceFragmentViewModel.button3State.toString(),
+                    practiceFragmentViewModel.button3Text.value
+                )
+                Spacer(modifier = Modifier.width(spaceBetweenButtons))
+                AnswerButton(
+                    practiceFragmentViewModel.button4State.value,
+                    practiceFragmentViewModel.button4State.toString(),
+                    practiceFragmentViewModel.button4Text.value
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun AnswerButton(state: Boolean, button: String, text: String) {
+        var buttonColor = MaterialTheme.colors.secondary
+        var textColor = Color.Black
+
+        if (state) {
+            buttonColor = MaterialTheme.colors.primary
+            textColor = Color.White
+        }
+
+        val textAnimatedColor by animateColorAsState(
+            targetValue =
+            textColor, animationSpec = tween(
+                durationMillis = 500
+            )
+        )
+
+        val buttonAnimatedColor by animateColorAsState(
+            targetValue = buttonColor, animationSpec = tween(
+                500
+            )
+        )
+
+        Button(
+            onClick = {
+                practiceFragmentViewModel.onButtonStateChanged(button)
+                practiceFragmentViewModel.userAnswerInput.value = text
+            },
+            modifier = Modifier
+                .size(100.dp)
+                .clip(shape = RoundedCornerShape(5.dp)),
+            colors = ButtonDefaults.buttonColors(buttonAnimatedColor)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = text,
+                    color = textAnimatedColor,
+                    style = MaterialTheme.typography.body1,
+                    fontSize = 24.sp
+                )
+            }
         }
     }
 }
