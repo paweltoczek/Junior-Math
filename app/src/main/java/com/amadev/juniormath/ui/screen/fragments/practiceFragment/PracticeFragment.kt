@@ -75,6 +75,14 @@ class PracticeFragment : Fragment() {
         practiceFragmentViewModel.setUpQuestionNumbers()
     }
 
+    private fun navigateToResultsFragment() {
+        val category = arguments?.getString("category")
+        val bundle = Bundle()
+        bundle.putInt("userCorrectAnswers", practiceFragmentViewModel.userCorrectAnswers.value)
+        bundle.putString("category", category)
+        findNavController().navigate(R.id.action_practiceFragment_to_resultsFragment, bundle)
+    }
+
     @Composable
     fun PracticeFragmentUI() {
         val category = arguments?.getString("category")
@@ -202,15 +210,6 @@ class PracticeFragment : Fragment() {
         }
     }
 
-    private fun navigateToResultsFragment() {
-        val category = arguments?.getString("category")
-        val bundle = Bundle()
-        bundle.putInt("userCorrectAnswers", practiceFragmentViewModel.userCorrectAnswers.value)
-        bundle.putString("category", category)
-
-        findNavController().navigate(R.id.action_practiceFragment_to_resultsFragment, bundle)
-    }
-
     @Composable
     fun Answers() {
         val spaceBetweenButtons = 25.dp
@@ -262,6 +261,11 @@ class PracticeFragment : Fragment() {
         var buttonColor = MaterialTheme.colors.secondary
         var textColor = Color.Black
 
+        val receivedValue by animateIntAsState(
+            targetValue = text.toInt(),
+            animationSpec = tween(500)
+        )
+
         if (state) {
             buttonColor = MaterialTheme.colors.primary
             textColor = Color.White
@@ -296,7 +300,7 @@ class PracticeFragment : Fragment() {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = text,
+                    text = "$receivedValue",
                     color = textAnimatedColor,
                     style = MaterialTheme.typography.body1,
                     fontSize = 24.sp

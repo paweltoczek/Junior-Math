@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PracticeFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    firebaseAuth: FirebaseAuth,
+    private val firebaseAuth: FirebaseAuth,
     private val firebaseDatabase: FirebaseDatabase
 ) :
     ViewModel(), ProvideMessage {
@@ -268,21 +268,25 @@ class PracticeFragmentViewModel @Inject constructor(
         val userEmail = getUserEmail()?.let { replaceFirebaseForbiddenCharsWhenSending(it) }
         val currentDate = replaceFirebaseForbiddenCharsWhenSending(getCurrentCurrentDate())
         val currentDay = getCurrentDayName()
+        val uuid = provideFirebaseUuiD()
 
         if (isUserLoggedIn()) {
             if (userEmail != null) {
-                val ref = firebaseDatabase.getReference("users")
+                val ref = firebaseDatabase.getReference("users").child(uuid)
 
                 ref.child(userEmail)
-                    .child(category.toString())
+                    .child(category.value)
                     .child(currentDate)
                     .setValue(
                         UserAnswersModel(
                             dayName = currentDay,
-                            userCorrectAnswers = userCorrectAnswers.toString(),
+                            userCorrectAnswers = userCorrectAnswers.value.toString(),
                             totalQuestions = TOTAL_QUESTIONS.toString()
                         )
                     )
+                    .addOnCompleteListener {
+                        _popUpMessage.value = it.result.toString()
+                    }
                     .addOnSuccessListener {
                         _popUpMessage.value = getMessage(dataSaved, context)
                     }
@@ -301,6 +305,14 @@ class PracticeFragmentViewModel @Inject constructor(
             isLoggedIn = true
         }
         return isLoggedIn
+    }
+
+    private fun provideFirebaseUuiD() : String {
+        var uid = ""
+        if (currentUser != null) {
+            uid = currentUser.uid
+        }
+        return uid
     }
 
     private fun getUserEmail(): String? {

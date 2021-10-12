@@ -8,7 +8,6 @@ import java.util.*
 object Util {
 
     private val date = Date()
-    private val calendar = Calendar.getInstance()
     private val dateFormat = SimpleDateFormat("EEEE")
 
 
@@ -34,7 +33,7 @@ object Util {
     }
 
     fun getCurrentCurrentDate() : String {
-        return SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
+        return SimpleDateFormat("dd-M-yyyy hh:mm:ss", Locale.getDefault()).format(Date())
     }
 
 }

@@ -82,7 +82,7 @@ class ResultsFragment : Fragment() {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(150.dp),
+                            .weight(3f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
