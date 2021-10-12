@@ -1,38 +1,55 @@
 package com.amadev.juniormath.ui.screen.fragments.practiceFragment
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.amadev.juniormath.R
+import com.amadev.juniormath.data.model.UserAnswersModel
 import com.amadev.juniormath.util.ProvideMessage
+import com.amadev.juniormath.util.Util.getCurrentCurrentDate
+import com.amadev.juniormath.util.Util.getCurrentDayName
+import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenCharsWhenSending
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel
-class PracticeFragmentViewModel @Inject constructor(@ApplicationContext private val context: Context) :
+class PracticeFragmentViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    firebaseAuth: FirebaseAuth,
+    private val firebaseDatabase: FirebaseDatabase
+) :
     ViewModel(), ProvideMessage {
+
+    companion object {
+        const val TOTAL_QUESTIONS = 15
+    }
+
+    private val currentUser = firebaseAuth.currentUser
 
     private val addition = context.getString(R.string.addition)
     private val subtract = context.getString(R.string.subtraction)
     private val multiplication = context.getString(R.string.multiplication)
     private val division = context.getString(R.string.division)
 
+    private val _popUpMessage = MutableLiveData<String>()
+    val popUpMessage = _popUpMessage
+    private val _finishedGame = MutableLiveData<Boolean>()
+    val finishedGame = _finishedGame
+
     private val category = mutableStateOf("")
     private val fromRange = mutableStateOf(0)
     private val toRange = mutableStateOf(0)
     private val correctAnswer = mutableStateOf(0)
 
-    private val _popUpMessage = MutableLiveData<String>()
-    val popUpMessage = _popUpMessage
-
     val operator = mutableStateOf("")
     val userAnswerInput = mutableStateOf("")
     val currentQuestion = mutableStateOf(1)
-    val questionNumberFirst = mutableStateOf(0)
-    val questionNumberSecond = mutableStateOf(0)
+    val questionFirstNumbers = mutableStateOf(0)
+    val questionSecondNumbers = mutableStateOf(0)
     val button1State = mutableStateOf(false)
     val button2State = mutableStateOf(false)
     val button3State = mutableStateOf(false)
@@ -41,14 +58,7 @@ class PracticeFragmentViewModel @Inject constructor(@ApplicationContext private 
     val button2Text = mutableStateOf("0")
     val button3Text = mutableStateOf("0")
     val button4Text = mutableStateOf("0")
-
     val userCorrectAnswers = mutableStateOf(0)
-    val totalQuestions = mutableStateOf(0)
-
-    private fun addition() = questionNumberFirst.value + questionNumberSecond.value
-    private fun subtract() = questionNumberFirst.value - questionNumberSecond.value
-    private fun multiplication() = questionNumberFirst.value * questionNumberSecond.value
-    private fun division() = questionNumberFirst.value / questionNumberSecond.value
 
     fun onButtonStateChanged(button: String) {
         when (button) {
@@ -93,12 +103,10 @@ class PracticeFragmentViewModel @Inject constructor(@ApplicationContext private 
 
     private fun compareUserInputWithCorrectAnswer() {
         if (userAnswerInput.value.toInt() == correctAnswer.value) userCorrectAnswers.value ++
-        Log.e("userans", userCorrectAnswers.value.toString())
     }
 
     fun setUpCategory(category: String) {
         this.category.value = category
-        setUpCorrectAnswer()
     }
 
     fun handleRanges(rangeFrom: Int?, rangeTo: Int?) {
@@ -120,9 +128,62 @@ class PracticeFragmentViewModel @Inject constructor(@ApplicationContext private 
     }
 
     fun setUpQuestionNumbers() {
-        questionNumberFirst.value = (fromRange.value..toRange.value).random()
-        questionNumberSecond.value = (fromRange.value..toRange.value).random()
+        when (category.value) {
+            addition -> {
+                setUpQuestionNumbersForAddition()
+            }
+            subtract -> {
+                setUpQuestionNumbersForSubtraction()
+            }
+            multiplication -> {
+                setUpQuestionNumbersForMultiplication()
+            }
+            division -> {
+                setUpQuestionNumbersForDivision()
+            }
+        }
+    }
+
+    private fun setUpQuestionNumbersForDivision() {
+        while (true) {
+
+            val firstNumber = (fromRange.value..toRange.value).random()
+            val secondNumber = (fromRange.value..toRange.value).random()
+
+            if (firstNumber / secondNumber != 0) {
+                if (firstNumber.toDouble() % secondNumber.toDouble() == 0.00) {
+                    questionFirstNumbers.value = firstNumber
+                    questionSecondNumbers.value = secondNumber
+                    setUpCorrectAnswer()
+                    break
+                }
+            }
+        }
+    }
+
+    private fun setUpQuestionNumbersForMultiplication() {
+        questionFirstNumbers.value = (fromRange.value..toRange.value).random()
+        questionSecondNumbers.value = (fromRange.value..toRange.value).random()
         setUpCorrectAnswer()
+    }
+
+    private fun setUpQuestionNumbersForAddition() {
+        questionFirstNumbers.value = (fromRange.value..toRange.value).random()
+        questionSecondNumbers.value = (fromRange.value..toRange.value).random()
+        setUpCorrectAnswer()
+    }
+
+    private fun setUpQuestionNumbersForSubtraction() {
+        while (true) {
+            val firstNumber = (fromRange.value..toRange.value).random()
+            val secondNumber = (fromRange.value..toRange.value).random()
+            if (firstNumber > secondNumber) {
+                questionFirstNumbers.value = firstNumber
+                questionSecondNumbers.value = secondNumber
+                setUpCorrectAnswer()
+                break
+            }
+        }
     }
 
     private fun setUpCorrectAnswer() {
@@ -148,7 +209,6 @@ class PracticeFragmentViewModel @Inject constructor(@ApplicationContext private 
                 correctAnswer.value = division()
                 operator.value = "/"
                 setUpAnswers(correctAnswer.value)
-
             }
         }
     }
@@ -186,14 +246,70 @@ class PracticeFragmentViewModel @Inject constructor(@ApplicationContext private 
     }
 
     fun validateUserInput() {
-        if (userAnswerInput.value == "") {
-            _popUpMessage.value = getMessage(selectYourAnswer, context)
-        } else {
+        if (currentQuestion.value == TOTAL_QUESTIONS) {
             compareUserInputWithCorrectAnswer()
             updateButtonStates()
             clearUserAnswerInput()
-            getNextQuestion()
+            writeDataToDatabaseIfPossible()
+            _finishedGame.value = true
+        } else {
+            if (userAnswerInput.value == "") {
+                _popUpMessage.value = getMessage(selectYourAnswer, context)
+            } else {
+                compareUserInputWithCorrectAnswer()
+                updateButtonStates()
+                clearUserAnswerInput()
+                getNextQuestion()
+            }
         }
     }
 
+    private fun writeDataToDatabaseIfPossible() {
+        val userEmail = getUserEmail()?.let { replaceFirebaseForbiddenCharsWhenSending(it) }
+        val currentDate = replaceFirebaseForbiddenCharsWhenSending(getCurrentCurrentDate())
+        val currentDay = getCurrentDayName()
+
+        if (isUserLoggedIn()) {
+            if (userEmail != null) {
+                val ref = firebaseDatabase.getReference("users")
+
+                ref.child(userEmail)
+                    .child(category.toString())
+                    .child(currentDate)
+                    .setValue(
+                        UserAnswersModel(
+                            dayName = currentDay,
+                            userCorrectAnswers = userCorrectAnswers.toString(),
+                            totalQuestions = TOTAL_QUESTIONS.toString()
+                        )
+                    )
+                    .addOnSuccessListener {
+                        _popUpMessage.value = getMessage(dataSaved, context)
+                    }
+
+                    .addOnFailureListener {
+                        _popUpMessage.value = it.message
+                    }
+            }
+        }
+    }
+
+    private fun isUserLoggedIn(): Boolean {
+        var isLoggedIn = false
+        if (currentUser != null) {
+            getUserEmail()
+            isLoggedIn = true
+        }
+        return isLoggedIn
+    }
+
+    private fun getUserEmail(): String? {
+        return currentUser?.email
+    }
+
+
+    private fun addition() = questionFirstNumbers.value + questionSecondNumbers.value
+    private fun subtract() = questionFirstNumbers.value - questionSecondNumbers.value
+    private fun multiplication() = questionFirstNumbers.value * questionSecondNumbers.value
+    private fun division() = questionFirstNumbers.value / questionSecondNumbers.value
 }

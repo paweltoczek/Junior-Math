@@ -10,10 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.screen.components.circleIndicator.CircleIndicator
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
@@ -46,18 +44,24 @@ class PracticeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
-
             setUpViewModel()
             setUpObservers()
             setContent {
-                PracticeScreenUi()
+                PracticeFragmentUI()
             }
         }
     }
 
     private fun setUpObservers() {
-        practiceFragmentViewModel.popUpMessage.observe(viewLifecycleOwner) {
-            showSnackBar(requireView(), it)
+        practiceFragmentViewModel.apply {
+            popUpMessage.observe(viewLifecycleOwner) {
+                showSnackBar(requireView(), it)
+            }
+            finishedGame.observe(viewLifecycleOwner) { gameFinished ->
+                if (gameFinished) {
+                    navigateToResultsFragment()
+                }
+            }
         }
     }
 
@@ -72,7 +76,7 @@ class PracticeFragment : Fragment() {
     }
 
     @Composable
-    fun PracticeScreenUi() {
+    fun PracticeFragmentUI() {
         val category = arguments?.getString("category")
         JuniorMathTheme {
             Column(
@@ -116,11 +120,11 @@ class PracticeFragment : Fragment() {
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        QuestionDigit(text = practiceFragmentViewModel.questionNumberFirst.value)
+                        QuestionDigit(text = practiceFragmentViewModel.questionFirstNumbers.value)
                         Spacer(modifier = Modifier.width(16.dp))
                         Operator()
                         Spacer(modifier = Modifier.width(16.dp))
-                        QuestionDigit(text = practiceFragmentViewModel.questionNumberSecond.value)
+                        QuestionDigit(text = practiceFragmentViewModel.questionSecondNumbers.value)
                     }
                     EqualOperator()
                     Spacer(modifier = Modifier.height(10.dp))
@@ -135,17 +139,19 @@ class PracticeFragment : Fragment() {
                 ) {
                     AcceptAnswerButton()
                 }
-
             }
         }
     }
 
     @Composable
     fun EqualOperator() {
-        Row(modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "=",
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "=",
                 style = MaterialTheme.typography.body1,
                 fontSize = 60.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -158,13 +164,15 @@ class PracticeFragment : Fragment() {
     fun QuestionDigit(text: Int) {
         val receivedValue by animateIntAsState(
             targetValue = text,
-            animationSpec = tween(1000)
+            animationSpec = tween(500)
         )
 
-        Text(text = "$receivedValue",
+        Text(
+            text = "$receivedValue",
             style = MaterialTheme.typography.body1,
             fontSize = 48.sp,
-            fontWeight = FontWeight.ExtraBold
+            fontWeight = FontWeight.ExtraBold,
+            color = MaterialTheme.colors.onSurface
         )
     }
 
@@ -192,6 +200,15 @@ class PracticeFragment : Fragment() {
         ) {
             Text(text = stringResource(id = R.string.accept))
         }
+    }
+
+    private fun navigateToResultsFragment() {
+        val category = arguments?.getString("category")
+        val bundle = Bundle()
+        bundle.putInt("userCorrectAnswers", practiceFragmentViewModel.userCorrectAnswers.value)
+        bundle.putString("category", category)
+
+        findNavController().navigate(R.id.action_practiceFragment_to_resultsFragment, bundle)
     }
 
     @Composable

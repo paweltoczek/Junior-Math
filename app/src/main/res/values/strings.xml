@@ -46,4 +46,8 @@
     <string name="answer">Answer</string>
     <string name="accept">Accept</string>
     <string name="selectYourAnswer">Select one answer</string>
+    <string name="results">Results</string>
+    <string name="totalQuestion">Total questions</string>
+    <string name="correctAnswers">Correct answers</string>
+    <string name="dataSaved">Data saved</string>
 </resources>
