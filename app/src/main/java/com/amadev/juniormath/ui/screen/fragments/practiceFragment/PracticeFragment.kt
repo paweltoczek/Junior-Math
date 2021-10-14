@@ -9,7 +9,9 @@ import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -85,13 +87,17 @@ class PracticeFragment : Fragment() {
 
     @Composable
     fun PracticeFragmentUI() {
+        val scrollState = rememberScrollState()
+
         val category = arguments?.getString("category")
+
         JuniorMathTheme {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(32.dp)
-                    .background(MaterialTheme.colors.surface),
+                    .background(MaterialTheme.colors.surface)
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {

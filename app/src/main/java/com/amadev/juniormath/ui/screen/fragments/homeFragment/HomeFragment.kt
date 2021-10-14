@@ -26,7 +26,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -64,6 +63,16 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun navigateToStatisticsFragment() {
+        findNavController().navigate(R.id.action_homeFragment_to_statisticsFragment)
+    }
+
+    private fun navigateToRangeFragment(categoryName: String) {
+        val bundle = Bundle()
+        bundle.putString("category", categoryName)
+        findNavController().navigate(R.id.action_homeFragment_to_rangeFragment, bundle)
+    }
+
 
     @Composable
     fun HomeScreen() {
@@ -73,15 +82,17 @@ class HomeFragment : Fragment() {
 
         JuniorMathTheme {
             Scaffold(
+                modifier = Modifier.verticalScroll(scrollState),
                 scaffoldState = state,
-                drawerContent = { NavDrawer() },
+                drawerContent = {
+                    NavDrawer()
+                },
                 content = {
                     Column(
                         modifier = Modifier
                             .background(MaterialTheme.colors.background)
                             .fillMaxSize()
-                            .padding(32.dp)
-                            .verticalScroll(scrollState),
+                            .padding(32.dp),
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -98,7 +109,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @Preview
     @Composable
     fun NavDrawer() {
         JuniorMathTheme {
@@ -215,7 +225,7 @@ class HomeFragment : Fragment() {
             ) {
                 TitleTextSmall(stringResource(id = R.string.statistics))
                 SubText(stringResource(id = R.string.checkHowYour))
-                StatisticsChart()
+                StatisticsButton()
                 Spacer(modifier = Modifier.height(32.dp))
                 TitleTextSmall(text = stringResource(id = R.string.practice))
                 SubText(text = stringResource(id = R.string.practiceMakesPerfect))
@@ -270,6 +280,16 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    fun StatisticsButton() {
+        TextButton(
+            onClick = { navigateToStatisticsFragment() },
+            modifier = Modifier.background(Color.Transparent)
+        ) {
+            StatisticsChart()
         }
     }
 
@@ -381,12 +401,5 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
-    private fun navigateToRangeFragment(categoryName: String) {
-        val bundle = Bundle()
-        bundle.putString("category", categoryName)
-        findNavController().navigate(R.id.action_homeFragment_to_rangeFragment, bundle)
-    }
-
 
 }

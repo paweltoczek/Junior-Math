@@ -26,6 +26,7 @@ class PracticeFragmentViewModel @Inject constructor(
 
     companion object {
         const val TOTAL_QUESTIONS = 15
+        const val USERS = "users"
     }
 
     private val currentUser = firebaseAuth.currentUser
@@ -272,7 +273,7 @@ class PracticeFragmentViewModel @Inject constructor(
 
         if (isUserLoggedIn()) {
             if (userEmail != null) {
-                val ref = firebaseDatabase.getReference("users").child(uuid)
+                val ref = firebaseDatabase.getReference(USERS).child(uuid)
 
                 ref.child(userEmail)
                     .child(category.value)

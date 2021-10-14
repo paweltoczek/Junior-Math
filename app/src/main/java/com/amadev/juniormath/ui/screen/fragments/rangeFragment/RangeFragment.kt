@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -54,12 +56,14 @@ class RangeFragment : Fragment() {
     @Composable
     fun RangeFragmentUI() {
         JuniorMathTheme {
-        val category = arguments?.getString("category")
+            val scrollState = rememberScrollState()
+            val category = arguments?.getString("category")
 
             Column(
                 modifier = Modifier
                     .background(MaterialTheme.colors.surface)
                     .padding(32.dp)
+                    .verticalScroll(scrollState)
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween

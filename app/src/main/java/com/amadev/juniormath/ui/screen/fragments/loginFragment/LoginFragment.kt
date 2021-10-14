@@ -11,9 +11,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,25 +55,27 @@ class LoginFragment : Fragment() {
             setUpObservers()
 
             setContent {
-                LoginScreen()
+                LoginScreenUI()
             }
         }
     }
 
     @Preview
     @Composable
-    fun LoginScreen() {
+    fun LoginScreenUI() {
 
         val emailInputErrorTextState = loginScreenViewModel.emailInputErrorTextState.value
         val emailInputErrorTextValue = loginScreenViewModel.emailInputErrorTextValue.value
         val passwordInputErrorTextState = loginScreenViewModel.passwordInputErrorTextState.value
         val passwordInputErrorTextValue = loginScreenViewModel.passwordInputErrorTextValue.value
+        val scrollState = rememberScrollState()
 
         JuniorMathTheme {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = MaterialTheme.colors.background)
+                    .verticalScroll(scrollState)
             ) {
                 Column(
                     modifier = Modifier
