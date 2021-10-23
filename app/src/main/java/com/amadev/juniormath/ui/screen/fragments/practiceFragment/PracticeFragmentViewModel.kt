@@ -6,10 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.amadev.juniormath.R
 import com.amadev.juniormath.data.model.UserAnswersModel
+import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.util.ProvideMessage
-import com.amadev.juniormath.util.Util.getCurrentCurrentDate
-import com.amadev.juniormath.util.Util.getCurrentDayName
-import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenCharsWhenSending
+import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +18,9 @@ import javax.inject.Inject
 @HiltViewModel
 class PracticeFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val firebaseAuth: FirebaseAuth,
-    private val firebaseDatabase: FirebaseDatabase
+    firebaseAuth: FirebaseAuth,
+    private val firebaseDatabase: FirebaseDatabase,
+    private val firebaseUserData: FirebaseUserData
 ) :
     ViewModel(), ProvideMessage {
 
@@ -29,23 +29,31 @@ class PracticeFragmentViewModel @Inject constructor(
         const val USERS = "users"
     }
 
+    // User Details
+    private val userEmail =
+        firebaseUserData.userEmail?.let { replaceFirebaseForbiddenChars(it) }
+    private val uuid = firebaseUserData.uuid
     private val currentUser = firebaseAuth.currentUser
 
+    //Categories Strings
     private val addition = context.getString(R.string.addition)
     private val subtract = context.getString(R.string.subtraction)
     private val multiplication = context.getString(R.string.multiplication)
     private val division = context.getString(R.string.division)
 
+    //LiveData
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
     private val _finishedGame = MutableLiveData<Boolean>()
     val finishedGame = _finishedGame
 
+    //Private mutableStateOf
     private val category = mutableStateOf("")
     private val fromRange = mutableStateOf(0)
     private val toRange = mutableStateOf(0)
     private val correctAnswer = mutableStateOf(0)
 
+    //Open mutableStateOf
     val operator = mutableStateOf("")
     val userAnswerInput = mutableStateOf("")
     val currentQuestion = mutableStateOf(1)
@@ -265,23 +273,22 @@ class PracticeFragmentViewModel @Inject constructor(
         }
     }
 
-    private fun writeDataToDatabaseIfPossible() {
-        val userEmail = getUserEmail()?.let { replaceFirebaseForbiddenCharsWhenSending(it) }
-        val currentDate = replaceFirebaseForbiddenCharsWhenSending(getCurrentCurrentDate())
-        val currentDay = getCurrentDayName()
-        val uuid = provideFirebaseUuiD()
+    private fun readFromDatabaseIfPossible() {
+        if (firebaseUserData.isUserLoggedIn()) {
 
-        if (isUserLoggedIn()) {
+        }
+    }
+
+    private fun writeDataToDatabaseIfPossible() {
+        if (firebaseUserData.isUserLoggedIn()) {
             if (userEmail != null) {
                 val ref = firebaseDatabase.getReference(USERS)
                     .child(uuid)
                     .child(userEmail)
                     .child(category.value)
-                    .child(currentDate)
 
                 ref.setValue(
                     UserAnswersModel(
-                        dayName = currentDay,
                         userCorrectAnswers = userCorrectAnswers.value.toString(),
                         totalQuestions = TOTAL_QUESTIONS.toString()
                     )
@@ -300,26 +307,6 @@ class PracticeFragmentViewModel @Inject constructor(
         }
     }
 
-    private fun isUserLoggedIn(): Boolean {
-        var isLoggedIn = false
-        if (currentUser != null) {
-            getUserEmail()
-            isLoggedIn = true
-        }
-        return isLoggedIn
-    }
-
-    private fun provideFirebaseUuiD() : String {
-        var uid = ""
-        if (currentUser != null) {
-            uid = currentUser.uid
-        }
-        return uid
-    }
-
-    private fun getUserEmail(): String? {
-        return currentUser?.email
-    }
 
 
     private fun addition() = questionFirstNumbers.value + questionSecondNumbers.value

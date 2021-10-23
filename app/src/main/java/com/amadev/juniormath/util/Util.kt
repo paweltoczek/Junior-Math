@@ -17,7 +17,7 @@ object Util {
         }
     }
 
-    fun replaceFirebaseForbiddenCharsWhenSending(string: String): String {
+    fun replaceFirebaseForbiddenChars(string: String): String {
         return string
             .replace(".", "_DOT_")
             .replace("@", "_AT_")

@@ -1,13 +1,12 @@
 package com.amadev.juniormath.di
 
-import android.content.Context
 import com.amadev.juniormath.data.firebase.FirebaseService
+import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -32,6 +31,15 @@ object FirebaseModule {
     @Provides
     fun provideFirebaseService(): FirebaseService {
         return FirebaseService(
+            FirebaseAuth.getInstance(),
+            FirebaseDatabase.getInstance()
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseUserData() : FirebaseUserData {
+        return FirebaseUserData(
             FirebaseAuth.getInstance(),
             FirebaseDatabase.getInstance()
         )

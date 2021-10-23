@@ -3,7 +3,7 @@ package com.amadev.juniormath.data.firebase
 import androidx.lifecycle.MutableLiveData
 import com.amadev.juniormath.util.Util.getCurrentCurrentDate
 import com.amadev.juniormath.util.Util.getCurrentDayName
-import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenCharsWhenSending
+import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
@@ -23,14 +23,14 @@ class FirebaseService @Inject constructor(
     val uuid = getFirebaseUuid()
 
     val userEmail = getFirebaseUserEmail()?.let {
-        replaceFirebaseForbiddenCharsWhenSending(it)
+        replaceFirebaseForbiddenChars(it)
     }
 
     val addition = "Addition"
     val subtraction = "Subtraction"
     val multiplication = "Multplication"
     val division = "Division"
-    val currentDate = replaceFirebaseForbiddenCharsWhenSending(getCurrentCurrentDate())
+    val currentDate = replaceFirebaseForbiddenChars(getCurrentCurrentDate())
     val currentDay = getCurrentDayName()
 
     private val _popUpMessage = MutableLiveData<String>()
