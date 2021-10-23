@@ -1,5 +1,6 @@
 package com.amadev.juniormath.ui.screen.fragments.homeFragment
 
+import HorizontalChart
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ComposeView
@@ -32,7 +34,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
-import com.amadev.juniormath.ui.screen.components.statistics.StatisticsChart
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -105,7 +106,6 @@ class HomeFragment : Fragment() {
                     }
 
                 })
-
         }
     }
 
@@ -285,11 +285,15 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun StatisticsButton() {
-        TextButton(
+        Button(
             onClick = { navigateToStatisticsFragment() },
-            modifier = Modifier.background(Color.Transparent)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
         ) {
-            StatisticsChart()
+            HorizontalChart()
         }
     }
 

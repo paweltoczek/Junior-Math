@@ -50,4 +50,6 @@
     <string name="totalQuestion">Total questions</string>
     <string name="correctAnswers">Correct answers</string>
     <string name="dataSaved">Data saved</string>
+    <string name="totalQuestions">Total questions</string>
+    <string name="totalCorrectAnswers">Total correct answers</string>
 </resources>

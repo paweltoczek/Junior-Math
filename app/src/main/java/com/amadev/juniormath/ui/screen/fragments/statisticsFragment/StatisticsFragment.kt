@@ -1,5 +1,6 @@
-package com.amadev.juniormath.ui.screen.fragments.statistics
+package com.amadev.juniormath.ui.screen.fragments.statisticsFragment
 
+import HorizontalChart
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.amadev.juniormath.R
-import com.amadev.juniormath.ui.screen.components.statistics.StatisticsChart
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentTitleText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
@@ -59,6 +59,8 @@ class StatisticsFragment : Fragment() {
             additionData.observe(viewLifecycleOwner){
                 Log.e("data", it.toString())
             }
+
+
         }
     }
 
@@ -148,13 +150,12 @@ class StatisticsFragment : Fragment() {
     @Composable
     fun StatisticsButton() {
         TextButton(
-            onClick = { statisticsFragmentViewModel.getAdditionData() },
+            onClick = { statisticsFragmentViewModel.getUserScoreData() },
             modifier = Modifier
                 .background(Color.Transparent)
                 .fillMaxWidth()
         ) {
-            StatisticsChart()
-
+            HorizontalChart()
         }
     }
 }

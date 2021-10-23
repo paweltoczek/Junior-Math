@@ -273,18 +273,19 @@ class PracticeFragmentViewModel @Inject constructor(
 
         if (isUserLoggedIn()) {
             if (userEmail != null) {
-                val ref = firebaseDatabase.getReference(USERS).child(uuid)
-
-                ref.child(userEmail)
+                val ref = firebaseDatabase.getReference(USERS)
+                    .child(uuid)
+                    .child(userEmail)
                     .child(category.value)
                     .child(currentDate)
-                    .setValue(
-                        UserAnswersModel(
-                            dayName = currentDay,
-                            userCorrectAnswers = userCorrectAnswers.value.toString(),
-                            totalQuestions = TOTAL_QUESTIONS.toString()
-                        )
+
+                ref.setValue(
+                    UserAnswersModel(
+                        dayName = currentDay,
+                        userCorrectAnswers = userCorrectAnswers.value.toString(),
+                        totalQuestions = TOTAL_QUESTIONS.toString()
                     )
+                )
                     .addOnCompleteListener {
                         _popUpMessage.value = it.result.toString()
                     }

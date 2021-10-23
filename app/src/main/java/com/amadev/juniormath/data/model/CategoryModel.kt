@@ -2,7 +2,8 @@ package com.amadev.juniormath.data.model
 
 data class CategoryModel(
     val addition : UserAnswersModel? = null,
-//    val subtraction : String? = null,
-//    val multiplication : String? = null,
-//    val division : String? = null
+    val subtraction : UserAnswersModel? = null,
+    val multiplication : UserAnswersModel? = null,
+    val division : UserAnswersModel? = null,
 )
+

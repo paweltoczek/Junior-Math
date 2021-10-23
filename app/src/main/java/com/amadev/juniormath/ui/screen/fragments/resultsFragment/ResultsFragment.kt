@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -50,6 +51,7 @@ class ResultsFragment : Fragment() {
         }
     }
 
+    @Preview
     @Composable
     fun ResultFragmentUI() {
         val scrollState = rememberScrollState()
@@ -67,7 +69,6 @@ class ResultsFragment : Fragment() {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background)
-                    .verticalScroll(scrollState)
             ) {
                 Column(
                     modifier = Modifier
