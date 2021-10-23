@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface RealtimeDatabaseRepository {
 
-    fun getUserAdditionScoreData() : Flow<Result<ArrayList<UserAnswersModel>>>
+    fun getUserAdditionScoreData() : Flow<Result<UserAnswersModel>>
 
     fun getUserSubtractionScoreData() : Flow<Result<ArrayList<UserAnswersModel>>>
 

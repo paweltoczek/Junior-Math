@@ -14,9 +14,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class RealtimeDatabaseRepositoryImpl @Inject constructor(
-    private val firebaseDatabase: FirebaseDatabase,
-    private val firebaseAuth: FirebaseAuth,
-    private val firebaseUserData: FirebaseUserData,
+    firebaseDatabase: FirebaseDatabase,
+    firebaseUserData: FirebaseUserData,
     @ApplicationContext context: Context
 ) : RealtimeDatabaseRepository {
 
@@ -40,10 +39,10 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
 
 
     @ExperimentalCoroutinesApi
-    override fun getUserAdditionScoreData() = callbackFlow<Result<ArrayList<UserAnswersModel>>> {
+    override fun getUserAdditionScoreData() = callbackFlow<Result<UserAnswersModel>> {
         val ref = firebaseReference.child(addition)
 
-        val result = ArrayList<UserAnswersModel>()
+        var result = UserAnswersModel()
         val postListener = object : ValueEventListener {
 
             override fun onCancelled(error: DatabaseError) {
@@ -53,7 +52,7 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.forEach { data ->
                     data.getValue(UserAnswersModel::class.java)?.let {
-                        result.add(it)
+                        result = it
                     }
                 }
                 this@callbackFlow.trySendBlocking(Result.success(result))
@@ -139,6 +138,4 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
             ref.removeEventListener(postListener)
         }
     }
-
-
 }

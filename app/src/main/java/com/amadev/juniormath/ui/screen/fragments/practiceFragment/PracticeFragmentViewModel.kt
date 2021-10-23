@@ -1,26 +1,32 @@
 package com.amadev.juniormath.ui.screen.fragments.practiceFragment
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.amadev.juniormath.R
 import com.amadev.juniormath.data.model.UserAnswersModel
 import com.amadev.juniormath.data.repository.FirebaseUserData
+import com.amadev.juniormath.data.repository.RealtimeDatabaseRepositoryImpl
 import com.amadev.juniormath.util.ProvideMessage
 import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PracticeFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    firebaseAuth: FirebaseAuth,
     private val firebaseDatabase: FirebaseDatabase,
-    private val firebaseUserData: FirebaseUserData
+    private val firebaseUserData: FirebaseUserData,
+    private val _realTimeDatabaseRepository: RealtimeDatabaseRepositoryImpl
 ) :
     ViewModel(), ProvideMessage {
 
@@ -31,9 +37,8 @@ class PracticeFragmentViewModel @Inject constructor(
 
     // User Details
     private val userEmail =
-        firebaseUserData.userEmail?.let { replaceFirebaseForbiddenChars(it) }
+        replaceFirebaseForbiddenChars(firebaseUserData.userEmail)
     private val uuid = firebaseUserData.uuid
-    private val currentUser = firebaseAuth.currentUser
 
     //Categories Strings
     private val addition = context.getString(R.string.addition)
@@ -41,7 +46,14 @@ class PracticeFragmentViewModel @Inject constructor(
     private val multiplication = context.getString(R.string.multiplication)
     private val division = context.getString(R.string.division)
 
+    //Database
+    var databaseTotalQuestions = 0
+    var databaseCorrectAnswers = 0
+
     //LiveData
+    private val _userScoreData = MutableLiveData<ArrayList<UserAnswersModel>>()
+    val userScoreData = _userScoreData
+
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
     private val _finishedGame = MutableLiveData<Boolean>()
@@ -53,7 +65,7 @@ class PracticeFragmentViewModel @Inject constructor(
     private val toRange = mutableStateOf(0)
     private val correctAnswer = mutableStateOf(0)
 
-    //Open mutableStateOf
+    //mutableStateOf
     val operator = mutableStateOf("")
     val userAnswerInput = mutableStateOf("")
     val currentQuestion = mutableStateOf(1)
@@ -123,12 +135,12 @@ class PracticeFragmentViewModel @Inject constructor(
             fromRange.value = rangeFrom
             toRange.value = rangeTo
         }
-        setUpQuestionNumbers()
+        handleCategoriesNumbers()
     }
 
     private fun getNextQuestion() {
         currentQuestion.value = currentQuestion.value + 1
-        setUpQuestionNumbers()
+        handleCategoriesNumbers()
         clearUserAnswerInput()
     }
 
@@ -136,9 +148,10 @@ class PracticeFragmentViewModel @Inject constructor(
         userAnswerInput.value = ""
     }
 
-    fun setUpQuestionNumbers() {
+    fun handleCategoriesNumbers() {
         when (category.value) {
             addition -> {
+
                 setUpQuestionNumbersForAddition()
             }
             subtract -> {
@@ -155,7 +168,6 @@ class PracticeFragmentViewModel @Inject constructor(
 
     private fun setUpQuestionNumbersForDivision() {
         while (true) {
-
             val firstNumber = (fromRange.value..toRange.value).random()
             val secondNumber = (fromRange.value..toRange.value).random()
 
@@ -229,7 +241,7 @@ class PracticeFragmentViewModel @Inject constructor(
         answersArrayList.add(correctAnswer)
 
         while (true) {
-            val wrongAnswer = (fromRange.value..toRange.value).random() + this.correctAnswer.value
+            val wrongAnswer = (fromRange.value..toRange.value).random() + (1..9).random()
             if (answersArrayList.contains(wrongAnswer).not()) {
                 answersArrayList.add(wrongAnswer)
                 if (answersArrayList.size == 4) break
@@ -273,44 +285,156 @@ class PracticeFragmentViewModel @Inject constructor(
         }
     }
 
-    private fun readFromDatabaseIfPossible() {
-        if (firebaseUserData.isUserLoggedIn()) {
+    private fun addition() = questionFirstNumbers.value + questionSecondNumbers.value
+    private fun subtract() = questionFirstNumbers.value - questionSecondNumbers.value
+    private fun multiplication() = questionFirstNumbers.value * questionSecondNumbers.value
+    private fun division() = questionFirstNumbers.value / questionSecondNumbers.value
 
+    // ---------------FIREBASE--------------
+
+    @ExperimentalCoroutinesApi
+    fun readFromDatabaseIfPossible() {
+        if (firebaseUserData.isUserLoggedIn()) {
+            getCategoryScoreData()
         }
     }
 
     private fun writeDataToDatabaseIfPossible() {
         if (firebaseUserData.isUserLoggedIn()) {
-            if (userEmail != null) {
-                val ref = firebaseDatabase.getReference(USERS)
-                    .child(uuid)
-                    .child(userEmail)
-                    .child(category.value)
+            val ref = firebaseDatabase.getReference(USERS)
+                .child(uuid)
+                .child(userEmail)
+                .child(category.value)
 
-                ref.setValue(
-                    UserAnswersModel(
-                        userCorrectAnswers = userCorrectAnswers.value.toString(),
-                        totalQuestions = TOTAL_QUESTIONS.toString()
-                    )
+            val totalQuestions = (databaseTotalQuestions + TOTAL_QUESTIONS).toString()
+            val correctAnswers = (databaseCorrectAnswers + userCorrectAnswers.value).toString()
+
+            ref.setValue(
+                UserAnswersModel(
+                    userCorrectAnswers = correctAnswers,
+                    totalQuestions = totalQuestions
                 )
-                    .addOnCompleteListener {
-                        _popUpMessage.value = it.result.toString()
-                    }
-                    .addOnSuccessListener {
-                        _popUpMessage.value = getMessage(dataSaved, context)
-                    }
+            )
+                .addOnCompleteListener {
+                    _popUpMessage.value = it.result.toString()
+                }
+                .addOnSuccessListener {
+                    _popUpMessage.value = getMessage(dataSaved, context)
+                }
 
-                    .addOnFailureListener {
-                        _popUpMessage.value = it.message
+                .addOnFailureListener {
+                    _popUpMessage.value = it.message
+                }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun getUserScoreDataForAddition() {
+        viewModelScope.launch {
+            _realTimeDatabaseRepository.getUserAdditionScoreData().collect {
+                when {
+                    it.isSuccess -> {
+                        val data = it.getOrNull()
+
+                        if (data.toString().isEmpty().not()){
+                            val totalQuestionsData = data?.totalQuestions
+                            val totalCorrectAnswersData = data?.userCorrectAnswers
+                            if(!totalCorrectAnswersData.isNullOrEmpty()) {
+                                databaseCorrectAnswers = totalCorrectAnswersData.toInt()
+                            } else if (!totalQuestionsData.isNullOrEmpty()){
+                                databaseTotalQuestions = totalQuestionsData.toInt()
+                            }
+                            Log.e("correct", databaseCorrectAnswers.toString())
+                            Log.e("total", databaseTotalQuestions.toString())
+                        }
                     }
+                    it.isFailure -> {
+                        val exception = it.exceptionOrNull()?.message
+                        _popUpMessage.postValue(exception)
+                    }
+                }
             }
         }
     }
 
+    @ExperimentalCoroutinesApi
+    private fun getUserScoreDataForSubtraction() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _realTimeDatabaseRepository.getUserSubtractionScoreData().collect {
+                when {
+                    it.isSuccess -> {
+                        val subtractionData = it.getOrNull()
+                        if (subtractionData != null) {
+                            databaseTotalQuestions = subtractionData[0].totalQuestions.toInt()
+                            databaseCorrectAnswers = subtractionData[0].totalQuestions.toInt()
+                        }
+                    }
+                    it.isFailure -> {
+                        var exception = it.exceptionOrNull()?.message
+                        _popUpMessage.postValue(exception)
+                    }
+                }
+            }
+        }
+    }
 
+    @ExperimentalCoroutinesApi
+    private fun getUserScoreDataForMultiplication() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _realTimeDatabaseRepository.getUserMultiplicationScoreData().collect {
+                when {
+                    it.isSuccess -> {
+                        val multiplicationData = it.getOrNull()
+                        if (multiplicationData != null) {
+                            databaseTotalQuestions = multiplicationData[0].totalQuestions.toInt()
+                            databaseCorrectAnswers = multiplicationData[0].totalQuestions.toInt()
+                        }
+                    }
+                    it.isFailure -> {
+                        var exception = it.exceptionOrNull()?.message
+                        _popUpMessage.postValue(exception)
+                    }
+                }
+            }
+        }
+    }
 
-    private fun addition() = questionFirstNumbers.value + questionSecondNumbers.value
-    private fun subtract() = questionFirstNumbers.value - questionSecondNumbers.value
-    private fun multiplication() = questionFirstNumbers.value * questionSecondNumbers.value
-    private fun division() = questionFirstNumbers.value / questionSecondNumbers.value
+    @ExperimentalCoroutinesApi
+    private fun getUserScoreDataForDivision() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _realTimeDatabaseRepository.getUserDivisionScoreData().collect {
+                when {
+                    it.isSuccess -> {
+                        val divisionData = it.getOrNull()
+                        if (divisionData != null) {
+                            databaseTotalQuestions = divisionData[0].totalQuestions.toInt()
+                            databaseCorrectAnswers = divisionData[0].totalQuestions.toInt()
+                        }
+                    }
+                    it.isFailure -> {
+                        val exception = it.exceptionOrNull()?.message
+                        _popUpMessage.postValue(exception)
+                    }
+                }
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getCategoryScoreData() {
+        when (category.value) {
+            addition -> {
+                getUserScoreDataForAddition()
+            }
+            subtract -> {
+                getUserScoreDataForSubtraction()
+            }
+            multiplication -> {
+                getUserScoreDataForMultiplication()
+            }
+            division -> {
+                getUserScoreDataForDivision()
+            }
+        }
+    }
 }

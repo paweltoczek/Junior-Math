@@ -34,6 +34,7 @@ import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentTitleText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class PracticeFragment : Fragment() {
@@ -67,6 +68,7 @@ class PracticeFragment : Fragment() {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun setUpViewModel() {
         val category = arguments?.getString("category")
         val fromRange = arguments?.getInt("fromRange")
@@ -74,7 +76,8 @@ class PracticeFragment : Fragment() {
 
         practiceFragmentViewModel.handleRanges(fromRange, toRange)
         practiceFragmentViewModel.setUpCategory(category.toString())
-        practiceFragmentViewModel.setUpQuestionNumbers()
+        practiceFragmentViewModel.handleCategoriesNumbers()
+        practiceFragmentViewModel.readFromDatabaseIfPossible()
     }
 
     private fun navigateToResultsFragment() {
