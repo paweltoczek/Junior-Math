@@ -33,6 +33,10 @@ class PracticeFragmentViewModel @Inject constructor(
     companion object {
         const val TOTAL_QUESTIONS = 15
         const val USERS = "users"
+        const val ADDITION_OPERATOR = "+"
+        const val SUBTRACTION_OPERATOR = "-"
+        const val MULTIPLICATION_OPERATOR = "*"
+        const val DIVISION_OPERATOR = "/"
     }
 
     // User Details
@@ -49,10 +53,6 @@ class PracticeFragmentViewModel @Inject constructor(
     //Database
     var databaseTotalQuestions = 0
     var databaseCorrectAnswers = 0
-
-    //LiveData
-    private val _userScoreData = MutableLiveData<ArrayList<UserAnswersModel>>()
-    val userScoreData = _userScoreData
 
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
@@ -75,10 +75,10 @@ class PracticeFragmentViewModel @Inject constructor(
     val button2State = mutableStateOf(false)
     val button3State = mutableStateOf(false)
     val button4State = mutableStateOf(false)
-    val button1Text = mutableStateOf("0")
-    val button2Text = mutableStateOf("0")
-    val button3Text = mutableStateOf("0")
-    val button4Text = mutableStateOf("0")
+    val answerButton1Text = mutableStateOf("0")
+    val answerButton2Text = mutableStateOf("0")
+    val answerButton3Text = mutableStateOf("0")
+    val answerButton4Text = mutableStateOf("0")
     val userCorrectAnswers = mutableStateOf(0)
 
     fun onButtonStateChanged(button: String) {
@@ -86,36 +86,44 @@ class PracticeFragmentViewModel @Inject constructor(
             button1State.toString() -> {
                 button1State.value = !button1State.value
                 if (button1State.value) {
-                    button2State.value = false
-                    button3State.value = false
-                    button4State.value = false
+                    false.also {
+                        button2State.value = it
+                        button3State.value = it
+                        button4State.value = it
+                    }
                 }
             }
 
             button2State.toString() -> {
                 button2State.value = !button2State.value
                 if (button2State.value) {
-                    button1State.value = false
-                    button3State.value = false
-                    button4State.value = false
+                    false.also {
+                        button1State.value = it
+                        button3State.value = it
+                        button4State.value = it
+                    }
                 }
             }
 
             button3State.toString() -> {
                 button3State.value = !button3State.value
                 if (button3State.value) {
-                    button1State.value = false
-                    button2State.value = false
-                    button4State.value = false
+                    false.also {
+                        button1State.value = it
+                        button2State.value = it
+                        button4State.value = it
+                    }
                 }
             }
 
             button4State.toString() -> {
                 button4State.value = !button4State.value
                 if (button4State.value) {
-                    button1State.value = false
-                    button2State.value = false
-                    button3State.value = false
+                    false.also {
+                        button1State.value = it
+                        button2State.value = it
+                        button3State.value = it
+                    }
                 }
             }
         }
@@ -151,7 +159,6 @@ class PracticeFragmentViewModel @Inject constructor(
     fun handleCategoriesNumbers() {
         when (category.value) {
             addition -> {
-
                 setUpQuestionNumbersForAddition()
             }
             subtract -> {
@@ -211,24 +218,23 @@ class PracticeFragmentViewModel @Inject constructor(
         when (category.value) {
             addition -> {
                 correctAnswer.value = addition()
-                operator.value = "+"
+                operator.value = ADDITION_OPERATOR
                 setUpAnswers(correctAnswer.value)
             }
             subtract -> {
                 correctAnswer.value = subtract()
-                operator.value = "-"
+                operator.value = SUBTRACTION_OPERATOR
                 setUpAnswers(correctAnswer.value)
 
             }
             multiplication -> {
                 correctAnswer.value = multiplication()
-                operator.value = "*"
+                operator.value = MULTIPLICATION_OPERATOR
                 setUpAnswers(correctAnswer.value)
-
             }
             division -> {
                 correctAnswer.value = division()
-                operator.value = "/"
+                operator.value = DIVISION_OPERATOR
                 setUpAnswers(correctAnswer.value)
             }
         }
@@ -250,10 +256,10 @@ class PracticeFragmentViewModel @Inject constructor(
 
         val shuffledList = answersArrayList.shuffled()
 
-        button1Text.value = shuffledList[0].toString()
-        button2Text.value = shuffledList[1].toString()
-        button3Text.value = shuffledList[2].toString()
-        button4Text.value = shuffledList[3].toString()
+        answerButton1Text.value = shuffledList[0].toString()
+        answerButton2Text.value = shuffledList[1].toString()
+        answerButton3Text.value = shuffledList[2].toString()
+        answerButton4Text.value = shuffledList[3].toString()
 
     }
 
@@ -295,7 +301,25 @@ class PracticeFragmentViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     fun readFromDatabaseIfPossible() {
         if (firebaseUserData.isUserLoggedIn()) {
-            getCategoryScoreData()
+            getDatabaseCategoryScoreData()
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getDatabaseCategoryScoreData() {
+        when (category.value) {
+            addition -> {
+                getUserScoreDataForAddition()
+            }
+            subtract -> {
+                getUserScoreDataForSubtraction()
+            }
+            multiplication -> {
+                getUserScoreDataForMultiplication()
+            }
+            division -> {
+                getUserScoreDataForDivision()
+            }
         }
     }
 
@@ -321,7 +345,6 @@ class PracticeFragmentViewModel @Inject constructor(
                 .addOnSuccessListener {
                     _popUpMessage.value = getMessage(dataSaved, context)
                 }
-
                 .addOnFailureListener {
                     _popUpMessage.value = it.message
                 }
@@ -335,19 +358,12 @@ class PracticeFragmentViewModel @Inject constructor(
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
+                        Log.e("data", data.toString())
 
-                        if (data.toString().isEmpty().not()){
-                            val totalQuestionsData = data?.totalQuestions
-                            val totalCorrectAnswersData = data?.userCorrectAnswers
-                            if(!totalCorrectAnswersData.isNullOrEmpty()) {
-                                databaseCorrectAnswers = totalCorrectAnswersData.toInt()
-                            } else if (!totalQuestionsData.isNullOrEmpty()){
-                                databaseTotalQuestions = totalQuestionsData.toInt()
-                            }
-                            Log.e("correct", databaseCorrectAnswers.toString())
-                            Log.e("total", databaseTotalQuestions.toString())
-                        }
+                        databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
+                        databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
                     }
+
                     it.isFailure -> {
                         val exception = it.exceptionOrNull()?.message
                         _popUpMessage.postValue(exception)
@@ -363,14 +379,15 @@ class PracticeFragmentViewModel @Inject constructor(
             _realTimeDatabaseRepository.getUserSubtractionScoreData().collect {
                 when {
                     it.isSuccess -> {
-                        val subtractionData = it.getOrNull()
-                        if (subtractionData != null) {
-                            databaseTotalQuestions = subtractionData[0].totalQuestions.toInt()
-                            databaseCorrectAnswers = subtractionData[0].totalQuestions.toInt()
-                        }
+                        val data = it.getOrNull()
+                        Log.e("data", data.toString())
+
+                        databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
+                        databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
                     }
+
                     it.isFailure -> {
-                        var exception = it.exceptionOrNull()?.message
+                        val exception = it.exceptionOrNull()?.message
                         _popUpMessage.postValue(exception)
                     }
                 }
@@ -384,14 +401,15 @@ class PracticeFragmentViewModel @Inject constructor(
             _realTimeDatabaseRepository.getUserMultiplicationScoreData().collect {
                 when {
                     it.isSuccess -> {
-                        val multiplicationData = it.getOrNull()
-                        if (multiplicationData != null) {
-                            databaseTotalQuestions = multiplicationData[0].totalQuestions.toInt()
-                            databaseCorrectAnswers = multiplicationData[0].totalQuestions.toInt()
-                        }
+                        val data = it.getOrNull()
+                        Log.e("data", data.toString())
+
+                        databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
+                        databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
                     }
+
                     it.isFailure -> {
-                        var exception = it.exceptionOrNull()?.message
+                        val exception = it.exceptionOrNull()?.message
                         _popUpMessage.postValue(exception)
                     }
                 }
@@ -405,12 +423,13 @@ class PracticeFragmentViewModel @Inject constructor(
             _realTimeDatabaseRepository.getUserDivisionScoreData().collect {
                 when {
                     it.isSuccess -> {
-                        val divisionData = it.getOrNull()
-                        if (divisionData != null) {
-                            databaseTotalQuestions = divisionData[0].totalQuestions.toInt()
-                            databaseCorrectAnswers = divisionData[0].totalQuestions.toInt()
-                        }
+                        val data = it.getOrNull()
+                        Log.e("data", data.toString())
+
+                        databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
+                        databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
                     }
+
                     it.isFailure -> {
                         val exception = it.exceptionOrNull()?.message
                         _popUpMessage.postValue(exception)
@@ -420,21 +439,4 @@ class PracticeFragmentViewModel @Inject constructor(
         }
     }
 
-    @ExperimentalCoroutinesApi
-    fun getCategoryScoreData() {
-        when (category.value) {
-            addition -> {
-                getUserScoreDataForAddition()
-            }
-            subtract -> {
-                getUserScoreDataForSubtraction()
-            }
-            multiplication -> {
-                getUserScoreDataForMultiplication()
-            }
-            division -> {
-                getUserScoreDataForDivision()
-            }
-        }
-    }
 }

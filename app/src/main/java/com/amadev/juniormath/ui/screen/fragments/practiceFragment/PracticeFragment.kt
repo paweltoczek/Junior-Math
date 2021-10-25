@@ -41,6 +41,7 @@ class PracticeFragment : Fragment() {
 
     private val practiceFragmentViewModel: PracticeFragmentViewModel by viewModels()
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -235,13 +236,13 @@ class PracticeFragment : Fragment() {
                 AnswerButton(
                     practiceFragmentViewModel.button1State.value,
                     practiceFragmentViewModel.button1State.toString(),
-                    practiceFragmentViewModel.button1Text.value
+                    practiceFragmentViewModel.answerButton1Text.value
                 )
                 Spacer(modifier = Modifier.width(spaceBetweenButtons))
                 AnswerButton(
                     practiceFragmentViewModel.button2State.value,
                     practiceFragmentViewModel.button2State.toString(),
-                    practiceFragmentViewModel.button2Text.value
+                    practiceFragmentViewModel.answerButton2Text.value
                 )
             }
             Spacer(modifier = Modifier.height(spaceBetweenButtons))
@@ -253,13 +254,13 @@ class PracticeFragment : Fragment() {
                 AnswerButton(
                     practiceFragmentViewModel.button3State.value,
                     practiceFragmentViewModel.button3State.toString(),
-                    practiceFragmentViewModel.button3Text.value
+                    practiceFragmentViewModel.answerButton3Text.value
                 )
                 Spacer(modifier = Modifier.width(spaceBetweenButtons))
                 AnswerButton(
                     practiceFragmentViewModel.button4State.value,
                     practiceFragmentViewModel.button4State.toString(),
-                    practiceFragmentViewModel.button4Text.value
+                    practiceFragmentViewModel.answerButton4Text.value
                 )
             }
         }

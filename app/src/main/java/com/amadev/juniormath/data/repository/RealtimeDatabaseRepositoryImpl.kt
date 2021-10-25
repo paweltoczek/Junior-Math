@@ -1,10 +1,10 @@
 package com.amadev.juniormath.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.amadev.juniormath.R
 import com.amadev.juniormath.data.model.UserAnswersModel
 import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,26 +36,18 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
     private val multiplication = context.getString(R.string.multiplication)
     private val division = context.getString(R.string.division)
 
-
-
     @ExperimentalCoroutinesApi
-    override fun getUserAdditionScoreData() = callbackFlow<Result<UserAnswersModel>> {
+    override fun getUserAdditionScoreData() = callbackFlow<Result<UserAnswersModel?>> {
         val ref = firebaseReference.child(addition)
 
-        var result = UserAnswersModel()
         val postListener = object : ValueEventListener {
-
             override fun onCancelled(error: DatabaseError) {
                 this@callbackFlow.trySendBlocking(Result.failure(error.toException()))
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach { data ->
-                    data.getValue(UserAnswersModel::class.java)?.let {
-                        result = it
-                    }
-                }
-                this@callbackFlow.trySendBlocking(Result.success(result))
+                val data = snapshot.getValue(UserAnswersModel::class.java)
+                this@callbackFlow.trySendBlocking(Result.success(data))
             }
         }
         ref.addValueEventListener(postListener)
@@ -65,22 +57,17 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
     }
 
     @ExperimentalCoroutinesApi
-    override fun getUserSubtractionScoreData() = callbackFlow<Result<ArrayList<UserAnswersModel>>> {
+    override fun getUserSubtractionScoreData() = callbackFlow<Result<UserAnswersModel?>> {
         val ref = firebaseReference.child(subtraction)
 
-        val result = ArrayList<UserAnswersModel>()
         val postListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 this@callbackFlow.trySendBlocking(Result.failure(error.toException()))
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach { data ->
-                    data.getValue(UserAnswersModel::class.java)?.let {
-                        result.add(it)
-                    }
-                }
-                this@callbackFlow.trySendBlocking(Result.success(result))
+                val data = snapshot.getValue(UserAnswersModel::class.java)
+                this@callbackFlow.trySendBlocking(Result.success(data))
             }
         }
         ref.addValueEventListener(postListener)
@@ -91,22 +78,17 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
 
     @ExperimentalCoroutinesApi
     override fun getUserMultiplicationScoreData() =
-        callbackFlow<Result<ArrayList<UserAnswersModel>>> {
+        callbackFlow<Result<UserAnswersModel?>> {
             val ref = firebaseReference.child(multiplication)
 
-            val result = ArrayList<UserAnswersModel>()
             val postListener = object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                     this@callbackFlow.trySendBlocking(Result.failure(error.toException()))
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    snapshot.children.forEach { data ->
-                        data.getValue(UserAnswersModel::class.java)?.let {
-                            result.add(it)
-                        }
-                    }
-                    this@callbackFlow.trySendBlocking(Result.success(result))
+                    val data = snapshot.getValue(UserAnswersModel::class.java)
+                    this@callbackFlow.trySendBlocking(Result.success(data))
                 }
             }
             ref.addValueEventListener(postListener)
@@ -116,21 +98,17 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
         }
 
     @ExperimentalCoroutinesApi
-    override fun getUserDivisionScoreData() = callbackFlow<Result<ArrayList<UserAnswersModel>>> {
+    override fun getUserDivisionScoreData() = callbackFlow<Result<UserAnswersModel?>> {
         val ref = firebaseReference.child(division)
-        val result = ArrayList<UserAnswersModel>()
+
         val postListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 this@callbackFlow.trySendBlocking(Result.failure(error.toException()))
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach { data ->
-                    data.getValue(UserAnswersModel::class.java)?.let {
-                        result.add(it)
-                    }
-                }
-                this@callbackFlow.trySendBlocking(Result.success(result))
+                val data = snapshot.getValue(UserAnswersModel::class.java)
+                this@callbackFlow.trySendBlocking(Result.success(data))
             }
         }
         ref.addValueEventListener(postListener)
