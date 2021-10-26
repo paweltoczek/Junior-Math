@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ComposeView
@@ -35,23 +34,21 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
+import com.amadev.juniormath.util.BundleKeys
+import com.amadev.juniormath.util.Categories
+import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
-    companion object {
-        const val ADDITION = "Addition"
-        const val SUBTRACTION = "Subtraction"
-        const val MULTIPLICATION = "Multiplication"
-        const val DIVISION = "Division"
-    }
+    private val homeFragmentViewModel: HomeFragmentViewModel by viewModels()
 
-    val homeFragmentViewModel: HomeFragmentViewModel by viewModels()
-
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -61,6 +58,23 @@ class HomeFragment : Fragment() {
             setContent {
                 HomeScreen()
             }
+            setUpViewModel()
+            setUpObservers()
+        }
+    }
+
+    private fun setUpObservers() {
+        homeFragmentViewModel.apply {
+            popUpMessage.observe(viewLifecycleOwner) {
+                showSnackBar(requireView(), it)
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun setUpViewModel() {
+        homeFragmentViewModel.apply {
+            getDataFromDatabaseIfPossible()
         }
     }
 
@@ -70,7 +84,7 @@ class HomeFragment : Fragment() {
 
     private fun navigateToRangeFragment(categoryName: String) {
         val bundle = Bundle()
-        bundle.putString("category", categoryName)
+        bundle.putString(BundleKeys.Category.toString(), categoryName)
         findNavController().navigate(R.id.action_homeFragment_to_rangeFragment, bundle)
     }
 
@@ -240,7 +254,7 @@ class HomeFragment : Fragment() {
                         CategoryButton(
                             stringResource(id = R.string.addition),
                             painterResource(R.drawable.addition),
-                            ADDITION
+                            Categories.Addition.name
                         )
                     }
                     Spacer(modifier = Modifier.width(20.dp))
@@ -251,7 +265,7 @@ class HomeFragment : Fragment() {
                         CategoryButton(
                             stringResource(id = R.string.subtraction),
                             painterResource(R.drawable.subtraction),
-                            SUBTRACTION
+                            Categories.Subtraction.name
                         )
                     }
                 }
@@ -267,7 +281,7 @@ class HomeFragment : Fragment() {
                         CategoryButton(
                             stringResource(id = R.string.multiplication),
                             painterResource(R.drawable.multiplication),
-                            MULTIPLICATION
+                            Categories.Multiplication.name
                         )
                     }
                     Spacer(modifier = Modifier.width(20.dp))
@@ -275,7 +289,7 @@ class HomeFragment : Fragment() {
                         CategoryButton(
                             stringResource(id = R.string.division),
                             painterResource(R.drawable.division),
-                            DIVISION
+                            Categories.Division.name
                         )
                     }
                 }
@@ -293,7 +307,10 @@ class HomeFragment : Fragment() {
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
         ) {
-            HorizontalChart()
+            HorizontalChart(
+                correctAnswers = homeFragmentViewModel.databaseCorrectAnswers.value,
+                totalQuestions = homeFragmentViewModel.databaseTotalQuestions.value
+            )
         }
     }
 

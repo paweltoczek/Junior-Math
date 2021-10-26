@@ -32,6 +32,7 @@ import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescription
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentTitleText
 import com.amadev.juniormath.ui.screen.components.titleTexts.SmallTitleText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
+import com.amadev.juniormath.util.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,10 +55,8 @@ class ResultsFragment : Fragment() {
     @Preview
     @Composable
     fun ResultFragmentUI() {
-        val scrollState = rememberScrollState()
-
-        val category = arguments?.getString("category")
-        val userCorrectAnswers = arguments?.getInt("userCorrectAnswers")
+        val category = arguments?.getString(BundleKeys.Category.name)
+        val userCorrectAnswers = arguments?.getInt(BundleKeys.UserCorrectAnswers.name)
 
         Handler(Looper.myLooper()!!).postDelayed({
             resultsFragmentViewModel.handleUserAnswers(userCorrectAnswers!!.toInt())

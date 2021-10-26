@@ -32,6 +32,7 @@ import com.amadev.juniormath.ui.screen.components.circleIndicator.CircleIndicato
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentTitleText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
+import com.amadev.juniormath.util.BundleKeys
 import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -71,9 +72,9 @@ class PracticeFragment : Fragment() {
 
     @ExperimentalCoroutinesApi
     private fun setUpViewModel() {
-        val category = arguments?.getString("category")
-        val fromRange = arguments?.getInt("fromRange")
-        val toRange = arguments?.getInt("toRange")
+        val category = arguments?.getString(BundleKeys.Category.name)
+        val fromRange = arguments?.getInt(BundleKeys.FromRange.name)
+        val toRange = arguments?.getInt(BundleKeys.ToRange.name)
 
         practiceFragmentViewModel.handleRanges(fromRange, toRange)
         practiceFragmentViewModel.setUpCategory(category.toString())
@@ -82,10 +83,10 @@ class PracticeFragment : Fragment() {
     }
 
     private fun navigateToResultsFragment() {
-        val category = arguments?.getString("category")
+        val category = arguments?.getString(BundleKeys.Category.name)
         val bundle = Bundle()
-        bundle.putInt("userCorrectAnswers", practiceFragmentViewModel.userCorrectAnswers.value)
-        bundle.putString("category", category)
+        bundle.putInt(BundleKeys.UserCorrectAnswers.name, practiceFragmentViewModel.userCorrectAnswers.value)
+        bundle.putString(BundleKeys.Category.name, category)
         findNavController().navigate(R.id.action_practiceFragment_to_resultsFragment, bundle)
     }
 
@@ -93,7 +94,7 @@ class PracticeFragment : Fragment() {
     fun PracticeFragmentUI() {
         val scrollState = rememberScrollState()
 
-        val category = arguments?.getString("category")
+        val category = arguments?.getString(BundleKeys.Category.name)
 
         JuniorMathTheme {
             Column(

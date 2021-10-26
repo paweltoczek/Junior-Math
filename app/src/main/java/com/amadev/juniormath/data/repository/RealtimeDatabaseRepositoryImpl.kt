@@ -1,12 +1,9 @@
 package com.amadev.juniormath.data.repository
 
-import android.content.Context
-import android.util.Log
-import com.amadev.juniormath.R
 import com.amadev.juniormath.data.model.UserAnswersModel
+import com.amadev.juniormath.util.Categories
 import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
 import com.google.firebase.database.*
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -15,8 +12,7 @@ import javax.inject.Inject
 
 class RealtimeDatabaseRepositoryImpl @Inject constructor(
     firebaseDatabase: FirebaseDatabase,
-    firebaseUserData: FirebaseUserData,
-    @ApplicationContext context: Context
+    firebaseUserData: FirebaseUserData
 ) : RealtimeDatabaseRepository {
 
     companion object {
@@ -31,14 +27,9 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
     private val firebaseReference =
         firebaseDatabase.getReference(REFERENCE).child(uuid).child(userEmail)
 
-    private val addition = context.getString(R.string.addition)
-    private val subtraction = context.getString(R.string.subtraction)
-    private val multiplication = context.getString(R.string.multiplication)
-    private val division = context.getString(R.string.division)
-
     @ExperimentalCoroutinesApi
     override fun getUserAdditionScoreData() = callbackFlow<Result<UserAnswersModel?>> {
-        val ref = firebaseReference.child(addition)
+        val ref = firebaseReference.child(Categories.Addition.toString())
 
         val postListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -58,7 +49,7 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
 
     @ExperimentalCoroutinesApi
     override fun getUserSubtractionScoreData() = callbackFlow<Result<UserAnswersModel?>> {
-        val ref = firebaseReference.child(subtraction)
+        val ref = firebaseReference.child(Categories.Subtraction.toString())
 
         val postListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
@@ -79,7 +70,7 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
     @ExperimentalCoroutinesApi
     override fun getUserMultiplicationScoreData() =
         callbackFlow<Result<UserAnswersModel?>> {
-            val ref = firebaseReference.child(multiplication)
+            val ref = firebaseReference.child(Categories.Multiplication.toString())
 
             val postListener = object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -99,7 +90,7 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
 
     @ExperimentalCoroutinesApi
     override fun getUserDivisionScoreData() = callbackFlow<Result<UserAnswersModel?>> {
-        val ref = firebaseReference.child(division)
+        val ref = firebaseReference.child(Categories.Division.toString())
 
         val postListener = object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {

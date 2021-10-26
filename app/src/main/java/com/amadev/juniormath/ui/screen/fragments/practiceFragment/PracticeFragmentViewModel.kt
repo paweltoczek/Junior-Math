@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amadev.juniormath.R
 import com.amadev.juniormath.data.model.UserAnswersModel
 import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.data.repository.RealtimeDatabaseRepositoryImpl
+import com.amadev.juniormath.util.Categories
 import com.amadev.juniormath.util.ProvideMessage
 import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
 import com.google.firebase.database.FirebaseDatabase
@@ -44,16 +44,11 @@ class PracticeFragmentViewModel @Inject constructor(
         replaceFirebaseForbiddenChars(firebaseUserData.userEmail)
     private val uuid = firebaseUserData.uuid
 
-    //Categories Strings
-    private val addition = context.getString(R.string.addition)
-    private val subtract = context.getString(R.string.subtraction)
-    private val multiplication = context.getString(R.string.multiplication)
-    private val division = context.getString(R.string.division)
-
     //Database
     var databaseTotalQuestions = 0
     var databaseCorrectAnswers = 0
 
+    //LiveData
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
     private val _finishedGame = MutableLiveData<Boolean>()
@@ -158,16 +153,16 @@ class PracticeFragmentViewModel @Inject constructor(
 
     fun handleCategoriesNumbers() {
         when (category.value) {
-            addition -> {
+            Categories.Addition.name -> {
                 setUpQuestionNumbersForAddition()
             }
-            subtract -> {
+            Categories.Subtraction.name -> {
                 setUpQuestionNumbersForSubtraction()
             }
-            multiplication -> {
+            Categories.Multiplication.name -> {
                 setUpQuestionNumbersForMultiplication()
             }
-            division -> {
+            Categories.Division.name -> {
                 setUpQuestionNumbersForDivision()
             }
         }
@@ -216,23 +211,23 @@ class PracticeFragmentViewModel @Inject constructor(
 
     private fun setUpCorrectAnswer() {
         when (category.value) {
-            addition -> {
+            Categories.Addition.name -> {
                 correctAnswer.value = addition()
                 operator.value = ADDITION_OPERATOR
                 setUpAnswers(correctAnswer.value)
             }
-            subtract -> {
+            Categories.Subtraction.name -> {
                 correctAnswer.value = subtract()
                 operator.value = SUBTRACTION_OPERATOR
                 setUpAnswers(correctAnswer.value)
 
             }
-            multiplication -> {
+            Categories.Multiplication.name -> {
                 correctAnswer.value = multiplication()
                 operator.value = MULTIPLICATION_OPERATOR
                 setUpAnswers(correctAnswer.value)
             }
-            division -> {
+            Categories.Division.name -> {
                 correctAnswer.value = division()
                 operator.value = DIVISION_OPERATOR
                 setUpAnswers(correctAnswer.value)
@@ -308,16 +303,16 @@ class PracticeFragmentViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     fun getDatabaseCategoryScoreData() {
         when (category.value) {
-            addition -> {
+            Categories.Addition.name -> {
                 getUserScoreDataForAddition()
             }
-            subtract -> {
+            Categories.Subtraction.name -> {
                 getUserScoreDataForSubtraction()
             }
-            multiplication -> {
+            Categories.Multiplication.name -> {
                 getUserScoreDataForMultiplication()
             }
-            division -> {
+            Categories.Division.name -> {
                 getUserScoreDataForDivision()
             }
         }
@@ -358,8 +353,6 @@ class PracticeFragmentViewModel @Inject constructor(
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
-                        Log.e("data", data.toString())
-
                         databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
                         databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
                     }
@@ -380,8 +373,6 @@ class PracticeFragmentViewModel @Inject constructor(
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
-                        Log.e("data", data.toString())
-
                         databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
                         databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
                     }
@@ -402,8 +393,6 @@ class PracticeFragmentViewModel @Inject constructor(
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
-                        Log.e("data", data.toString())
-
                         databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
                         databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
                     }
@@ -424,8 +413,6 @@ class PracticeFragmentViewModel @Inject constructor(
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
-                        Log.e("data", data.toString())
-
                         databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
                         databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
                     }

@@ -32,6 +32,7 @@ import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentTitleText
 import com.amadev.juniormath.ui.screen.components.titleTexts.SmallOverviewText
 import com.amadev.juniormath.ui.screen.components.titleTexts.SmallTitleText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
+import com.amadev.juniormath.util.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -57,7 +58,7 @@ class RangeFragment : Fragment() {
     fun RangeFragmentUI() {
         JuniorMathTheme {
             val scrollState = rememberScrollState()
-            val category = arguments?.getString("category")
+            val category = arguments?.getString(BundleKeys.Category.name)
 
             Column(
                 modifier = Modifier
@@ -174,11 +175,11 @@ class RangeFragment : Fragment() {
 
     private fun navigateToPracticeFragment() {
         val bundle = Bundle()
-        val category = arguments?.getString("category")
+        val category = arguments?.getString(BundleKeys.Category.name)
 
-        bundle.putString("category", category.toString())
-        bundle.putInt("fromRange", rangeFragmentViewModel.fromRangeInput.value.toInt())
-        bundle.putInt("toRange", rangeFragmentViewModel.toRangeInput.value.toInt())
+        bundle.putString(BundleKeys.Category.toString(), category.toString())
+        bundle.putInt(BundleKeys.FromRange.name, rangeFragmentViewModel.fromRangeInput.value.toInt())
+        bundle.putInt(BundleKeys.ToRange.name, rangeFragmentViewModel.toRangeInput.value.toInt())
         findNavController().navigate(R.id.action_rangeFragment_to_practiceFragment, bundle)
     }
 }
