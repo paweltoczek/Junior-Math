@@ -1,24 +1,19 @@
 package com.amadev.juniormath.ui.screen.fragments.welcomeFragment
 
-import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.util.ProvideMessage
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.*
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 @HiltViewModel
 class WelcomeFragmentViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseUserData: FirebaseUserData
 ) :
     ViewModel(), ProvideMessage {
-
-    private val currentUser = firebaseAuth.currentUser
 
     private val _loginAutomaticallyIfPossible = MutableLiveData<Boolean>()
     val loginAutomaticallyIfPossible = _loginAutomaticallyIfPossible
@@ -26,15 +21,10 @@ class WelcomeFragmentViewModel @Inject constructor(
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
 
+
     fun loginAutomaticallyIfPossible() {
-        if (currentUser != null) {
-            if (currentUser.isEmailVerified.not()) {
-                _loginAutomaticallyIfPossible.value = false
-            } else {
-                Handler(Looper.myLooper()!!).postDelayed({
-                    _loginAutomaticallyIfPossible.value = true
-                }, 2000)
-            }
+        Timer("delay", false).schedule(2000) {
+            _loginAutomaticallyIfPossible.postValue(firebaseUserData.isUserLoggedIn())
         }
     }
 }

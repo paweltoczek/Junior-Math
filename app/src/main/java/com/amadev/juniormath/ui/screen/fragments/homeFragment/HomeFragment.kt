@@ -57,9 +57,9 @@ class HomeFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 HomeScreen()
+                setUpViewModel()
+                setUpObservers()
             }
-            setUpViewModel()
-            setUpObservers()
         }
     }
 
@@ -88,16 +88,13 @@ class HomeFragment : Fragment() {
         findNavController().navigate(R.id.action_homeFragment_to_rangeFragment, bundle)
     }
 
-
     @Composable
     fun HomeScreen() {
-        val scrollState = rememberScrollState()
         val state = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
 
         JuniorMathTheme {
             Scaffold(
-                modifier = Modifier.verticalScroll(scrollState),
                 scaffoldState = state,
                 drawerContent = {
                     NavDrawer()
@@ -221,7 +218,13 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun HomeScreenUI(state: ScaffoldState, coroutineScope: CoroutineScope) {
-        Column {
+        val scrollState = rememberScrollState()
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -299,6 +302,14 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun StatisticsButton() {
+        var correctAnswers = 0
+        var totalQuestions = 0
+
+        if (homeFragmentViewModel.allFunctionsCalled.value == 4) {
+            correctAnswers = homeFragmentViewModel.databaseCorrectAnswers.value
+            totalQuestions = homeFragmentViewModel.databaseTotalQuestions.value
+        }
+
         Button(
             onClick = { navigateToStatisticsFragment() },
             modifier = Modifier
@@ -308,8 +319,8 @@ class HomeFragment : Fragment() {
             colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
         ) {
             HorizontalChart(
-                correctAnswers = homeFragmentViewModel.databaseCorrectAnswers.value,
-                totalQuestions = homeFragmentViewModel.databaseTotalQuestions.value
+                correctAnswers = correctAnswers,
+                totalQuestions = totalQuestions
             )
         }
     }
@@ -362,6 +373,8 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun WelcomeText() {
+        val userEmail = homeFragmentViewModel.userEmail ?: ""
+
         Text(
             buildAnnotatedString {
                 withStyle(style = ParagraphStyle(lineHeight = 30.sp)) {
@@ -381,8 +394,8 @@ class HomeFragment : Fragment() {
                             color = MaterialTheme.colors.primary
                         )
                     ) {
-                        append(" ")
-                        append("Anna")
+                        append("\n")
+                        append(userEmail)
                     }
                 }
             }

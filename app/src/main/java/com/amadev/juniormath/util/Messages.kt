@@ -15,6 +15,7 @@ sealed class Messages {
     object LoginFailed : Messages()
     object SelectYourAnswer : Messages()
     object DataSaved : Messages()
+    object SomethingWentWrong : Messages()
 }
 
 
@@ -47,6 +48,9 @@ interface ProvideMessage {
     val dataSaved: Messages.DataSaved
         get() = Messages.DataSaved
 
+    val somethingWentWrong: Messages.SomethingWentWrong
+        get() = Messages.SomethingWentWrong
+
     fun getMessage(message: Messages, context: Context) =
         when (message) {
             is Messages.FieldCantBeEmpty -> context.getString(R.string.fieldCantBeEmpty)
@@ -60,6 +64,7 @@ interface ProvideMessage {
             is Messages.PleaseVerifyEmailSent -> context.getString(R.string.pleaseVerifyEmailSent)
             is Messages.SelectYourAnswer -> context.getString(R.string.selectYourAnswer)
             is Messages.DataSaved -> context.getString(R.string.dataSaved)
+            is Messages.SomethingWentWrong -> context.getString(R.string.somethingWentWrong)
         }
 
 

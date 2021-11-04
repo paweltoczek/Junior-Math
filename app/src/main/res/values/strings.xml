@@ -52,4 +52,5 @@
     <string name="dataSaved">Data saved</string>
     <string name="totalQuestions">Total questions</string>
     <string name="totalCorrectAnswers">Total correct answers</string>
+    <string name="somethingWentWrong">Something went wrong</string>
 </resources>

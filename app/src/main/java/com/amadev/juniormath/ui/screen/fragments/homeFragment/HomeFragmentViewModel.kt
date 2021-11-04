@@ -19,15 +19,24 @@ class HomeFragmentViewModel @Inject constructor(
     private val _realTimeDatabaseRepository: RealtimeDatabaseRepositoryImpl
 ) : ViewModel() {
 
+    private val currentUser = firebaseUserData.currentUser
+    val userEmail = firebaseUserData.userEmail
+
     var databaseTotalQuestions = mutableStateOf(0)
     var databaseCorrectAnswers = mutableStateOf(0)
 
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
 
+    val allFunctionsCalled = mutableStateOf(0)
+
     @ExperimentalCoroutinesApi
     fun getDataFromDatabaseIfPossible() {
-        if (firebaseUserData.isUserLoggedIn()) {
+        if (currentUser != null) {
+            databaseCorrectAnswers.value = 0
+            databaseTotalQuestions.value = 0
+            allFunctionsCalled.value = 0
+
             getUserScoreDataForAddition()
             getUserScoreDataForDivision()
             getUserScoreDataForMultiplication()
@@ -37,19 +46,17 @@ class HomeFragmentViewModel @Inject constructor(
 
     @ExperimentalCoroutinesApi
     private fun getUserScoreDataForAddition() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _realTimeDatabaseRepository.getUserAdditionScoreData().collect {
+                allFunctionsCalled.value += 1
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
-
                         val totalQuestions = data?.totalQuestions?.toInt() ?: 0
                         val correctAnswers = data?.userCorrectAnswers?.toInt() ?: 0
-
-                        databaseTotalQuestions.value = 0 + totalQuestions
-                        databaseCorrectAnswers.value = 0 + correctAnswers
+                        databaseTotalQuestions.value = databaseTotalQuestions.value + totalQuestions
+                        databaseCorrectAnswers.value = databaseCorrectAnswers.value + correctAnswers
                     }
-
                     it.isFailure -> {
                         val exception = it.exceptionOrNull()?.message
                         _popUpMessage.postValue(exception)
@@ -63,6 +70,8 @@ class HomeFragmentViewModel @Inject constructor(
     private fun getUserScoreDataForSubtraction() {
         viewModelScope.launch(Dispatchers.IO) {
             _realTimeDatabaseRepository.getUserSubtractionScoreData().collect {
+                allFunctionsCalled.value += 1
+
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
@@ -70,8 +79,8 @@ class HomeFragmentViewModel @Inject constructor(
                         val totalQuestions = data?.totalQuestions?.toInt() ?: 0
                         val correctAnswers = data?.userCorrectAnswers?.toInt() ?: 0
 
-                        databaseTotalQuestions.value = 0 + totalQuestions
-                        databaseCorrectAnswers.value = 0 + correctAnswers
+                        databaseTotalQuestions.value = databaseTotalQuestions.value + totalQuestions
+                        databaseCorrectAnswers.value = databaseCorrectAnswers.value + correctAnswers
                     }
 
                     it.isFailure -> {
@@ -87,6 +96,8 @@ class HomeFragmentViewModel @Inject constructor(
     private fun getUserScoreDataForMultiplication() {
         viewModelScope.launch(Dispatchers.IO) {
             _realTimeDatabaseRepository.getUserMultiplicationScoreData().collect {
+                allFunctionsCalled.value += 1
+
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
@@ -94,8 +105,8 @@ class HomeFragmentViewModel @Inject constructor(
                         val totalQuestions = data?.totalQuestions?.toInt() ?: 0
                         val correctAnswers = data?.userCorrectAnswers?.toInt() ?: 0
 
-                        databaseTotalQuestions.value = 0 + totalQuestions
-                        databaseCorrectAnswers.value = 0 + correctAnswers
+                        databaseTotalQuestions.value = databaseTotalQuestions.value + totalQuestions
+                        databaseCorrectAnswers.value = databaseCorrectAnswers.value + correctAnswers
                     }
 
                     it.isFailure -> {
@@ -111,6 +122,8 @@ class HomeFragmentViewModel @Inject constructor(
     private fun getUserScoreDataForDivision() {
         viewModelScope.launch(Dispatchers.IO) {
             _realTimeDatabaseRepository.getUserDivisionScoreData().collect {
+                allFunctionsCalled.value += 1
+
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
@@ -118,8 +131,8 @@ class HomeFragmentViewModel @Inject constructor(
                         val totalQuestions = data?.totalQuestions?.toInt() ?: 0
                         val correctAnswers = data?.userCorrectAnswers?.toInt() ?: 0
 
-                        databaseTotalQuestions.value = 0 + totalQuestions
-                        databaseCorrectAnswers.value = 0 + correctAnswers
+                        databaseTotalQuestions.value = databaseTotalQuestions.value + totalQuestions
+                        databaseCorrectAnswers.value = databaseCorrectAnswers.value + correctAnswers
                     }
 
                     it.isFailure -> {

@@ -25,8 +25,8 @@ import com.amadev.juniormath.R
 
 @Composable
 fun HorizontalChart(
-    correctAnswers: Int = 10,
-    totalQuestions: Int = 30,
+    correctAnswers: Int = 0,
+    totalQuestions: Int = 0,
     canvasWidth: Dp = 300.dp
 ) {
 
@@ -59,7 +59,7 @@ fun HorizontalChart(
         modifier = Modifier
             .width(canvasWidth)
             .wrapContentHeight()
-            .padding(0.dp,12.dp),
+            .padding(0.dp, 12.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Center
     ) {
@@ -70,6 +70,7 @@ fun HorizontalChart(
         TotalCorrectAnswersText(correctAnswers = correctAnswers)
         Spacer(modifier = Modifier.height(8.dp))
         ForegroundColumn(componentWidth)
+        Spacer(modifier = Modifier.height(12.dp))
 
     }
 

@@ -16,12 +16,14 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.amadev.juniormath.R
@@ -101,7 +103,8 @@ class ForgotPasswordDialog : DialogFragment() {
     fun TitleText() {
         Text(
             text = stringResource(id = R.string.forgotPassword),
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(12.dp),
+            fontSize = 18.sp
         )
     }
 
@@ -122,12 +125,9 @@ class ForgotPasswordDialog : DialogFragment() {
                 focusedBorderColor = MaterialTheme.colors.primary,
                 unfocusedBorderColor = MaterialTheme.colors.secondary
             ),
-            textStyle = MaterialTheme.typography.body1,
+            textStyle = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true,
-
-
-            )
+            singleLine = true)
     }
 
     @Composable

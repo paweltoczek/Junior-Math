@@ -5,24 +5,21 @@ import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.util.ProvideMessage
-import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthEmailException
-import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val firebaseUserData: FirebaseUserData
 ) : ViewModel(), ProvideMessage {
 
-    private val currentUser = firebaseAuth.currentUser
+    private val currentUser = firebaseUserData.currentUser
 
     val emailInput = mutableStateOf("")
     val emailInputErrorTextState = mutableStateOf(false)
@@ -76,46 +73,42 @@ class LoginFragmentViewModel @Inject constructor(
             emailInput.value.trim(),
             passwordInput.value.trim()
         )
+            .addOnSuccessListener {
+                if (currentUser != null) {
+                    if (currentUser.isEmailVerified) {
+                        _loginAutomatically.value = true
+                        loginButtonState.value = false
+                    }
+                }
+            }
             .addOnCompleteListener {
-
                 if (it.isSuccessful) {
                     if (currentUser != null) {
                         if (currentUser.isEmailVerified.not()) {
                             _popUpMessage.value = getMessage(verifyEmailSent, context)
                             loginButtonState.value = false
                         } else {
-                            loginAutomatically.value = true
+                            _loginAutomatically.value = true
                             loginButtonState.value = false
                         }
                     }
-                } else if (it.isSuccessful.not()) {
-                    try {
-                        throw it.exception!!
-                    } catch (e: FirebaseAuthEmailException) {
-                        loginButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: FirebaseAuthException) {
-                        loginButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: FirebaseAuthInvalidUserException) {
-                        loginButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: TimeoutException) {
-                        loginButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: FirebaseTooManyRequestsException) {
-                        loginButtonState.value = false
-                        _popUpMessage.value = e.message
-                    }
+                } else {
+                    loginButtonState.value = false
+                    _popUpMessage.value = getMessage(somethingWentWrong, context)
                 }
             }
-
+            .addOnFailureListener {
+                loginButtonState.value = false
+                _popUpMessage.value = it.message
+            }
     }
 
     fun loginAutomaticallyIfPossible() {
         if (currentUser != null) {
-            if (currentUser.isEmailVerified) {
-                loginAutomatically.value = true
+            if (currentUser.isEmailVerified.not()) {
+                _popUpMessage.value = getMessage(pleaseVerifyEmailSent, context)
+            } else {
+                _loginAutomatically.value = true
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.amadev.juniormath.ui.screen.fragments.practiceFragment
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,7 @@ import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.data.repository.RealtimeDatabaseRepositoryImpl
 import com.amadev.juniormath.util.Categories
 import com.amadev.juniormath.util.ProvideMessage
-import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
+import com.amadev.juniormath.util.Util.encodeFirebaseForbiddenChars
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -41,7 +40,7 @@ class PracticeFragmentViewModel @Inject constructor(
 
     // User Details
     private val userEmail =
-        replaceFirebaseForbiddenChars(firebaseUserData.userEmail)
+        encodeFirebaseForbiddenChars(firebaseUserData.userEmail)
     private val uuid = firebaseUserData.uuid
 
     //Database
@@ -242,7 +241,7 @@ class PracticeFragmentViewModel @Inject constructor(
         answersArrayList.add(correctAnswer)
 
         while (true) {
-            val wrongAnswer = (fromRange.value..toRange.value).random() + (1..9).random()
+            val wrongAnswer = correctAnswer + (-2..2).random()
             if (answersArrayList.contains(wrongAnswer).not()) {
                 answersArrayList.add(wrongAnswer)
                 if (answersArrayList.size == 4) break

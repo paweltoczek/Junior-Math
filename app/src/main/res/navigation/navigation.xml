@@ -11,9 +11,6 @@
         <action
             android:id="@+id/action_welcomeScreen_to_loginScreenFragment"
             app:destination="@id/loginScreenFragment" />
-        <action
-            android:id="@+id/action_welcomeScreen_to_homeFragment"
-            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginScreenFragment"

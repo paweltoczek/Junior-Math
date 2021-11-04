@@ -2,7 +2,7 @@ package com.amadev.juniormath.data.repository
 
 import com.amadev.juniormath.data.model.UserAnswersModel
 import com.amadev.juniormath.util.Categories
-import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
+import com.amadev.juniormath.util.Util.encodeFirebaseForbiddenChars
 import com.google.firebase.database.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -21,7 +21,7 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
 
     //User data
     private val uuid = firebaseUserData.uuid
-    private val userEmail = replaceFirebaseForbiddenChars(firebaseUserData.userEmail)
+    private val userEmail = encodeFirebaseForbiddenChars(firebaseUserData.userEmail)
 
     //Firebase Reference
     private val firebaseReference =

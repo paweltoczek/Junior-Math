@@ -2,21 +2,19 @@ package com.amadev.juniormath.ui.screen.fragments.statisticsFragment
 
 import HorizontalChart
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.amadev.juniormath.R
+import com.amadev.juniormath.data.model.UserAnswersModel
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentTitleText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
 @AndroidEntryPoint
@@ -36,6 +36,7 @@ class StatisticsFragment : Fragment() {
 
     private val statisticsFragmentViewModel: StatisticsFragmentViewModel by viewModels()
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,20 +57,18 @@ class StatisticsFragment : Fragment() {
             popUpMessage.observe(viewLifecycleOwner){
                 showSnackBar(requireView(), it)
             }
-            additionData.observe(viewLifecycleOwner){
-                Log.e("data", it.toString())
-            }
-
-
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun setUpViewModel() {
         statisticsFragmentViewModel.apply {
+            getUserScoreData()
         }
     }
 
 
+    @ExperimentalCoroutinesApi
     @Preview
     @Composable
     fun StatisticsFragmentUI() {
@@ -111,7 +110,9 @@ class StatisticsFragment : Fragment() {
                         ) {
                             FragmentDescriptionText(string = stringResource(id = R.string.addition))
                         }
-                        StatisticsButton()
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        StatisticsButton(statisticsFragmentViewModel.additionScoreData.value)
                         Spacer(modifier = Modifier.height(24.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -120,7 +121,8 @@ class StatisticsFragment : Fragment() {
                         ) {
                             FragmentDescriptionText(string = stringResource(id = R.string.subtraction))
                         }
-                        StatisticsButton()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        StatisticsButton(statisticsFragmentViewModel.subtractionScoreData.value)
                         Spacer(modifier = Modifier.height(24.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -129,7 +131,8 @@ class StatisticsFragment : Fragment() {
                         ) {
                             FragmentDescriptionText(string = stringResource(id = R.string.multiplication))
                         }
-                        StatisticsButton()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        StatisticsButton(statisticsFragmentViewModel.multiplicationScoreData.value)
                         Spacer(modifier = Modifier.height(24.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -138,7 +141,8 @@ class StatisticsFragment : Fragment() {
                         ) {
                             FragmentDescriptionText(string = stringResource(id = R.string.division))
                         }
-                        StatisticsButton()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        StatisticsButton(statisticsFragmentViewModel.divisionScoreData.value)
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 }
@@ -147,15 +151,22 @@ class StatisticsFragment : Fragment() {
         }
     }
 
+    @ExperimentalCoroutinesApi
     @Composable
-    fun StatisticsButton() {
-        TextButton(
-            onClick = { statisticsFragmentViewModel.getUserScoreData() },
+    fun StatisticsButton(values: UserAnswersModel) {
+        Button(
+            onClick = {},
             modifier = Modifier
-                .background(Color.Transparent)
                 .fillMaxWidth()
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
         ) {
-            HorizontalChart()
+            HorizontalChart(
+                correctAnswers = values.userCorrectAnswers.toInt(),
+                totalQuestions = values.totalQuestions.toInt()
+            )
         }
     }
 }

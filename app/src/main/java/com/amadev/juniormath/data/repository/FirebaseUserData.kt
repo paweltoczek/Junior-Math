@@ -1,6 +1,5 @@
 package com.amadev.juniormath.data.repository
 
-import com.amadev.juniormath.util.Util.replaceFirebaseForbiddenChars
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import javax.inject.Inject
@@ -10,11 +9,9 @@ class FirebaseUserData @Inject constructor(
     val firebaseDatabase: FirebaseDatabase
 ) {
 
-    private val currentUser = firebaseAuth.currentUser
+    val currentUser = firebaseAuth.currentUser
     val uuid = getFirebaseUuid()
-    val userEmail = getFirebaseUserEmail()?.let {
-        replaceFirebaseForbiddenChars(it)
-    }
+    val userEmail = getFirebaseUserEmail()
 
     private fun getFirebaseUuid(): String {
         return currentUser?.uid.toString()
@@ -22,7 +19,6 @@ class FirebaseUserData @Inject constructor(
 
     private fun getFirebaseUserEmail(): String {
         var email = ""
-        val user = firebaseAuth.currentUser
         if (currentUser != null) {
             email = currentUser.email.toString()
         }
@@ -36,4 +32,10 @@ class FirebaseUserData @Inject constructor(
         }
         return isLoggedIn
     }
+
+    fun isCurrentUserEmailVerified(): Boolean {
+        return currentUser?.isEmailVerified == true
+    }
+
+
 }
