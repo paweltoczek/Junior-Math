@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +34,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
+import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
+import com.amadev.juniormath.ui.screen.dialogs.logoutDialog.LogoutDialog
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.util.BundleKeys
 import com.amadev.juniormath.util.Categories
@@ -59,6 +62,7 @@ class HomeFragment : Fragment() {
                 HomeScreen()
                 setUpViewModel()
                 setUpObservers()
+                setUpOnBackPressedCallback()
             }
         }
     }
@@ -86,6 +90,28 @@ class HomeFragment : Fragment() {
         val bundle = Bundle()
         bundle.putString(BundleKeys.Category.toString(), categoryName)
         findNavController().navigate(R.id.action_homeFragment_to_rangeFragment, bundle)
+    }
+
+    private fun setUpOnBackPressedCallback() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (homeFragmentViewModel.isUserLogged) {
+                    activity?.finishAffinity()
+                } else {
+                    navigateToLoginFragment()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+
+    private fun navigateToLoginFragment() {
+        findNavController().navigate(R.id.action_homeFragment_to_loginScreenFragment)
+    }
+
+    private fun showLogoutDialog() {
+        val dialog = LogoutDialog()
+        dialog.show(childFragmentManager, null)
     }
 
     @Composable
@@ -140,7 +166,7 @@ class HomeFragment : Fragment() {
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     Text(
-                        text = "Anna",
+                        text = homeFragmentViewModel.userEmail,
                         color = MaterialTheme.colors.primary,
                         style = MaterialTheme.typography.body1,
                         fontSize = 24.sp,
@@ -197,9 +223,12 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun NavButton(buttonText: String) {
+        val logoutText = stringResource(id = R.string.logout)
         Button(
             onClick = {
-                findNavController().navigate(R.id.action_homeFragment_to_rangeFragment)
+                if (buttonText == logoutText) {
+                    showLogoutDialog()
+                }
             },
             shape = RoundedCornerShape(50),
             modifier = Modifier
@@ -302,26 +331,35 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun StatisticsButton() {
-        var correctAnswers = 0
-        var totalQuestions = 0
-
-        if (homeFragmentViewModel.allFunctionsCalled.value == 4) {
-            correctAnswers = homeFragmentViewModel.databaseCorrectAnswers.value
-            totalQuestions = homeFragmentViewModel.databaseTotalQuestions.value
-        }
+        val availableOnlyForLogged = stringResource(id = R.string.availableOnlyForLogged)
 
         Button(
-            onClick = { navigateToStatisticsFragment() },
+            onClick = {
+                if (homeFragmentViewModel.isUserLogged) {
+                    navigateToStatisticsFragment()
+                } else {
+                    showSnackBar(requireView(), availableOnlyForLogged)
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
+                .height(150.dp)
                 .padding(0.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
         ) {
-            HorizontalChart(
-                correctAnswers = correctAnswers,
-                totalQuestions = totalQuestions
-            )
+            if (homeFragmentViewModel.isUserLogged.not()) {
+                FragmentDescriptionText(string = availableOnlyForLogged)
+            } else {
+                if (homeFragmentViewModel.dataLoaded.value) {
+                    HorizontalChart(
+                        correctAnswers = homeFragmentViewModel.databaseCorrectAnswers.value,
+                        totalQuestions = homeFragmentViewModel.databaseTotalQuestions.value
+                    )
+                } else {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
 

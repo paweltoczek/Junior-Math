@@ -15,126 +15,49 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeFragmentViewModel @Inject constructor(
-    private val firebaseUserData: FirebaseUserData,
+    firebaseUserData: FirebaseUserData,
     private val _realTimeDatabaseRepository: RealtimeDatabaseRepositoryImpl
 ) : ViewModel() {
 
     private val currentUser = firebaseUserData.currentUser
+    val isUserLogged = firebaseUserData.isUserLoggedIn()
     val userEmail = firebaseUserData.userEmail
 
-    var databaseTotalQuestions = mutableStateOf(0)
-    var databaseCorrectAnswers = mutableStateOf(0)
+    val databaseTotalQuestions = mutableStateOf(0)
+    val databaseCorrectAnswers = mutableStateOf(0)
 
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
 
-    val allFunctionsCalled = mutableStateOf(0)
+    val dataLoaded = mutableStateOf(false)
 
     @ExperimentalCoroutinesApi
     fun getDataFromDatabaseIfPossible() {
         if (currentUser != null) {
+            dataLoaded.value = false
             databaseCorrectAnswers.value = 0
             databaseTotalQuestions.value = 0
-            allFunctionsCalled.value = 0
 
-            getUserScoreDataForAddition()
-            getUserScoreDataForDivision()
-            getUserScoreDataForMultiplication()
-            getUserScoreDataForSubtraction()
+            getUserScoreData()
         }
     }
 
+
     @ExperimentalCoroutinesApi
-    private fun getUserScoreDataForAddition() {
+    private fun getUserScoreData() {
         viewModelScope.launch(Dispatchers.IO) {
-            _realTimeDatabaseRepository.getUserAdditionScoreData().collect {
-                allFunctionsCalled.value += 1
+            _realTimeDatabaseRepository.getAllScoreData().collect {
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
-                        val totalQuestions = data?.totalQuestions?.toInt() ?: 0
-                        val correctAnswers = data?.userCorrectAnswers?.toInt() ?: 0
-                        databaseTotalQuestions.value = databaseTotalQuestions.value + totalQuestions
-                        databaseCorrectAnswers.value = databaseCorrectAnswers.value + correctAnswers
+                        data?.forEach { score ->
+                            if (score != null) {
+                                databaseTotalQuestions.value += score.totalQuestions.toInt()
+                                databaseCorrectAnswers.value += score.userCorrectAnswers.toInt()
+                            }
+                        }
+                        dataLoaded.value = true
                     }
-                    it.isFailure -> {
-                        val exception = it.exceptionOrNull()?.message
-                        _popUpMessage.postValue(exception)
-                    }
-                }
-            }
-        }
-    }
-
-    @ExperimentalCoroutinesApi
-    private fun getUserScoreDataForSubtraction() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _realTimeDatabaseRepository.getUserSubtractionScoreData().collect {
-                allFunctionsCalled.value += 1
-
-                when {
-                    it.isSuccess -> {
-                        val data = it.getOrNull()
-
-                        val totalQuestions = data?.totalQuestions?.toInt() ?: 0
-                        val correctAnswers = data?.userCorrectAnswers?.toInt() ?: 0
-
-                        databaseTotalQuestions.value = databaseTotalQuestions.value + totalQuestions
-                        databaseCorrectAnswers.value = databaseCorrectAnswers.value + correctAnswers
-                    }
-
-                    it.isFailure -> {
-                        val exception = it.exceptionOrNull()?.message
-                        _popUpMessage.postValue(exception)
-                    }
-                }
-            }
-        }
-    }
-
-    @ExperimentalCoroutinesApi
-    private fun getUserScoreDataForMultiplication() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _realTimeDatabaseRepository.getUserMultiplicationScoreData().collect {
-                allFunctionsCalled.value += 1
-
-                when {
-                    it.isSuccess -> {
-                        val data = it.getOrNull()
-
-                        val totalQuestions = data?.totalQuestions?.toInt() ?: 0
-                        val correctAnswers = data?.userCorrectAnswers?.toInt() ?: 0
-
-                        databaseTotalQuestions.value = databaseTotalQuestions.value + totalQuestions
-                        databaseCorrectAnswers.value = databaseCorrectAnswers.value + correctAnswers
-                    }
-
-                    it.isFailure -> {
-                        val exception = it.exceptionOrNull()?.message
-                        _popUpMessage.postValue(exception)
-                    }
-                }
-            }
-        }
-    }
-
-    @ExperimentalCoroutinesApi
-    private fun getUserScoreDataForDivision() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _realTimeDatabaseRepository.getUserDivisionScoreData().collect {
-                allFunctionsCalled.value += 1
-
-                when {
-                    it.isSuccess -> {
-                        val data = it.getOrNull()
-
-                        val totalQuestions = data?.totalQuestions?.toInt() ?: 0
-                        val correctAnswers = data?.userCorrectAnswers?.toInt() ?: 0
-
-                        databaseTotalQuestions.value = databaseTotalQuestions.value + totalQuestions
-                        databaseCorrectAnswers.value = databaseCorrectAnswers.value + correctAnswers
-                    }
-
                     it.isFailure -> {
                         val exception = it.exceptionOrNull()?.message
                         _popUpMessage.postValue(exception)

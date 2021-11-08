@@ -107,4 +107,27 @@ class RealtimeDatabaseRepositoryImpl @Inject constructor(
             ref.removeEventListener(postListener)
         }
     }
+
+    override fun getAllScoreData() = callbackFlow<Result<ArrayList<UserAnswersModel?>>> {
+        val ref = firebaseReference
+        val data = ArrayList<UserAnswersModel?>()
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    data.add(it.getValue(UserAnswersModel::class.java))
+                }
+                this@callbackFlow.trySendBlocking(Result.success(data))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                this@callbackFlow.trySendBlocking(Result.failure(error.toException()))
+            }
+        }
+
+        ref.addValueEventListener(postListener)
+
+        awaitClose {
+            ref.removeEventListener(postListener)
+        }
+    }
 }

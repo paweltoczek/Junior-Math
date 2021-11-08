@@ -12,4 +12,6 @@ interface RealtimeDatabaseRepository {
     fun getUserMultiplicationScoreData() : Flow<Result<UserAnswersModel?>>
 
     fun getUserDivisionScoreData() : Flow<Result<UserAnswersModel?>>
+
+    fun getAllScoreData() : Flow<Result<ArrayList<UserAnswersModel?>>>
 }

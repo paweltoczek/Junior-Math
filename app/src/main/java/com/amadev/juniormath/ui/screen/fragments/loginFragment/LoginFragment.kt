@@ -57,6 +57,36 @@ class LoginFragment : Fragment() {
         }
     }
 
+    private fun navigateToSignUpScreen() {
+        findNavController().navigate(R.id.action_loginScreenFragment_to_signUpScreen)
+    }
+
+    private fun navigateToCategoryFragment() {
+        findNavController().navigate(R.id.action_loginScreenFragment_to_homeFragment)
+    }
+
+    private fun showForgotPasswordDialog() {
+        val forgotPasswordDialog = ForgotPasswordDialog()
+        forgotPasswordDialog.show(childFragmentManager, null)
+    }
+
+    private fun setUpObservers() {
+        loginScreenViewModel.apply {
+            popUpMessage.observe(viewLifecycleOwner) {
+                showSnackBar(requireView(), it)
+            }
+            loginAutomatically.observe(viewLifecycleOwner) {
+                if (it) navigateToCategoryFragment()
+            }
+        }
+    }
+
+    private fun setUpViewModel() {
+        loginScreenViewModel.apply {
+            loginAutomaticallyIfPossible()
+        }
+    }
+
     @Preview
     @Composable
     fun LoginScreenUI() {
@@ -295,36 +325,4 @@ class LoginFragment : Fragment() {
         }
     }
 
-
-    private fun navigateToSignUpScreen() {
-        findNavController().navigate(R.id.action_loginScreenFragment_to_signUpScreen)
-    }
-
-    private fun navigateToCategoryFragment() {
-        findNavController().navigate(R.id.action_loginScreenFragment_to_homeFragment)
-    }
-
-    private fun showForgotPasswordDialog() {
-        val forgotPasswordDialog = ForgotPasswordDialog()
-        forgotPasswordDialog.show(childFragmentManager, null)
-    }
-
-
-    private fun setUpObservers() {
-        loginScreenViewModel.apply {
-            popUpMessage.observe(viewLifecycleOwner) {
-                showSnackBar(requireView(), it)
-            }
-            loginAutomatically.observe(viewLifecycleOwner) {
-                if (it) navigateToCategoryFragment()
-            }
-        }
-    }
-
-
-    private fun setUpViewModel() {
-        loginScreenViewModel.apply {
-            loginAutomaticallyIfPossible()
-        }
-    }
 }

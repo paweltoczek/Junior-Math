@@ -53,4 +53,8 @@
     <string name="totalQuestions">Total questions</string>
     <string name="totalCorrectAnswers">Total correct answers</string>
     <string name="somethingWentWrong">Something went wrong</string>
+    <string name="availableOnlyForLogged">Available only for logged users</string>
+    <string name="sureWantToLogOut">Sure you want to logout?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

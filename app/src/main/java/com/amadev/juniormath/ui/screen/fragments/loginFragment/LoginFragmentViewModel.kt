@@ -5,18 +5,21 @@ import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.util.ProvideMessage
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseAuth: FirebaseAuth,
-    private val firebaseUserData: FirebaseUserData
+    firebaseUserData: FirebaseUserData
 ) : ViewModel(), ProvideMessage {
 
     private val currentUser = firebaseUserData.currentUser
@@ -69,48 +72,31 @@ class LoginFragmentViewModel @Inject constructor(
     }
 
     private fun doLoginWithEmailAndPassword() {
-        firebaseAuth.signInWithEmailAndPassword(
-            emailInput.value.trim(),
-            passwordInput.value.trim()
-        )
-            .addOnSuccessListener {
-                if (currentUser != null) {
-                    if (currentUser.isEmailVerified) {
-                        _loginAutomatically.value = true
-                        loginButtonState.value = false
-                    }
-                }
-            }
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
+        viewModelScope.launch(Dispatchers.IO) {
+            firebaseAuth.signInWithEmailAndPassword(
+                emailInput.value.trim(),
+                passwordInput.value.trim()
+            )
+                .addOnSuccessListener {
                     if (currentUser != null) {
                         if (currentUser.isEmailVerified.not()) {
-                            _popUpMessage.value = getMessage(verifyEmailSent, context)
-                            loginButtonState.value = false
+                            _loginAutomatically.postValue(false)
+                            _popUpMessage.postValue(getMessage(verifyEmailSent, context))
                         } else {
-                            _loginAutomatically.value = true
-                            loginButtonState.value = false
+                            _loginAutomatically.postValue(true)
                         }
                     }
-                } else {
-                    loginButtonState.value = false
-                    _popUpMessage.value = getMessage(somethingWentWrong, context)
                 }
-            }
-            .addOnFailureListener {
-                loginButtonState.value = false
-                _popUpMessage.value = it.message
-            }
-    }
-
-    fun loginAutomaticallyIfPossible() {
-        if (currentUser != null) {
-            if (currentUser.isEmailVerified.not()) {
-                _popUpMessage.value = getMessage(pleaseVerifyEmailSent, context)
-            } else {
-                _loginAutomatically.value = true
-            }
+                .addOnFailureListener { exception ->
+                    loginButtonState.value = false
+                    _popUpMessage.postValue(exception.message)
+                }
         }
     }
 
+    fun loginAutomaticallyIfPossible() {
+        if (firebaseAuth.currentUser != null) {
+            _loginAutomatically.value = true
+        }
+    }
 }

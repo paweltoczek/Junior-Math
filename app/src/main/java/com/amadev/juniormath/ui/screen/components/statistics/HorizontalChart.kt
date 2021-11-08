@@ -1,4 +1,5 @@
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -40,19 +41,19 @@ fun HorizontalChart(
         canvasWidth.value.toInt()
     }
 
-    var animatedForegroundBlockValue by remember { mutableStateOf(0f) }
+    var animatedForegroundBlockValue by remember { mutableStateOf(0.dp) }
 
     LaunchedEffect(key1 = allowedBlockValue) {
-        animatedForegroundBlockValue = allowedBlockValue.toFloat()
+        animatedForegroundBlockValue = allowedBlockValue.dp
     }
 
     val blockPointValue = canvasWidth / totalQuestions
 
     val percentage = animatedForegroundBlockValue * blockPointValue.value
 
-    val componentWidth by animateFloatAsState(
+    val componentWidth by animateDpAsState(
         targetValue = percentage,
-        animationSpec = tween(3000)
+        animationSpec = tween(1500, delayMillis = 100, easing = FastOutLinearInEasing)
     )
 
     Column(
@@ -91,11 +92,11 @@ fun BackgroundColumn(componentWidth: Dp) {
 }
 
 @Composable
-fun ForegroundColumn(componentWidth: Float) {
+fun ForegroundColumn(componentWidth: Dp) {
     Column(
         modifier = Modifier
             .height(20.dp)
-            .width(componentWidth.dp)
+            .width(componentWidth)
             .clip(shape = RoundedCornerShape(50))
             .background(MaterialTheme.colors.primary)
     ) {}
