@@ -30,8 +30,19 @@ class StatisticsFragmentViewModel @Inject constructor(
     var divisionScoreData =
         mutableStateOf(UserAnswersModel(userCorrectAnswers = "0", totalQuestions = "0"))
 
+    val additionDataLoaded = mutableStateOf(false)
+    val subtractionDataLoaded = mutableStateOf(false)
+    val multiplicationDataLoaded = mutableStateOf(false)
+    val divisionDataLoaded = mutableStateOf(false)
+
     @ExperimentalCoroutinesApi
     fun getUserScoreData() {
+        false.also {
+            additionDataLoaded.value = it
+            subtractionDataLoaded.value = it
+            multiplicationDataLoaded.value = it
+            divisionDataLoaded.value = it
+        }
         getUserAdditionData()
         getUserSubtractionData()
         getUserMultiplicationData()
@@ -40,7 +51,7 @@ class StatisticsFragmentViewModel @Inject constructor(
 
     @ExperimentalCoroutinesApi
     private fun getUserAdditionData() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _realTimeDataBaseRepository.getUserAdditionScoreData().collect {
                 when {
                     it.isSuccess -> {
@@ -51,7 +62,7 @@ class StatisticsFragmentViewModel @Inject constructor(
                             userCorrectAnswers = "$correctAnswers",
                             totalQuestions = "$totalQuestions"
                         )
-
+                        additionDataLoaded.value = true
                     }
                     it.isFailure -> {
                         val exception = it.exceptionOrNull()?.message
@@ -76,6 +87,7 @@ class StatisticsFragmentViewModel @Inject constructor(
                             userCorrectAnswers = "$correctAnswers",
                             totalQuestions = "$totalQuestions"
                         )
+                        subtractionDataLoaded.value = true
                     }
                     it.isFailure -> {
                         val exception = it.exceptionOrNull()?.message
@@ -88,7 +100,7 @@ class StatisticsFragmentViewModel @Inject constructor(
 
     @ExperimentalCoroutinesApi
     private fun getUserMultiplicationData() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _realTimeDataBaseRepository.getUserMultiplicationScoreData().collect {
                 when {
                     it.isSuccess -> {
@@ -100,6 +112,8 @@ class StatisticsFragmentViewModel @Inject constructor(
                             userCorrectAnswers = "$correctAnswers",
                             totalQuestions = "$totalQuestions"
                         )
+                        multiplicationDataLoaded.value = true
+
                     }
                     it.isFailure -> {
                         val exception = it.exceptionOrNull()?.message
@@ -124,6 +138,7 @@ class StatisticsFragmentViewModel @Inject constructor(
                             userCorrectAnswers = "$correctAnswers",
                             totalQuestions = "$totalQuestions"
                         )
+                        divisionDataLoaded.value = true
                     }
                     it.isFailure -> {
                         val exception = it.exceptionOrNull()?.message

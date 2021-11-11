@@ -130,7 +130,8 @@ class HomeFragment : Fragment() {
                         modifier = Modifier
                             .background(MaterialTheme.colors.background)
                             .fillMaxSize()
-                            .padding(32.dp),
+                            .padding(32.dp)
+                            .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -247,12 +248,10 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun HomeScreenUI(state: ScaffoldState, coroutineScope: CoroutineScope) {
-        val scrollState = rememberScrollState()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
         ) {
             Row(
                 modifier = Modifier

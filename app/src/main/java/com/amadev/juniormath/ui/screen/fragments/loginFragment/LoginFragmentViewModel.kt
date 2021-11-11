@@ -73,30 +73,33 @@ class LoginFragmentViewModel @Inject constructor(
 
     private fun doLoginWithEmailAndPassword() {
         viewModelScope.launch(Dispatchers.IO) {
-            firebaseAuth.signInWithEmailAndPassword(
-                emailInput.value.trim(),
-                passwordInput.value.trim()
-            )
-                .addOnSuccessListener {
-                    if (currentUser != null) {
-                        if (currentUser.isEmailVerified.not()) {
-                            _loginAutomatically.postValue(false)
-                            _popUpMessage.postValue(getMessage(verifyEmailSent, context))
-                        } else {
-                            _loginAutomatically.postValue(true)
+
+            if (currentUser != null) {
+                if (currentUser.isEmailVerified) {
+                    firebaseAuth.signInWithEmailAndPassword(
+                        emailInput.value.trim(),
+                        passwordInput.value.trim()
+                    )
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                _loginAutomatically.postValue(true)
+                                loginButtonState.value = false
+                            }
                         }
-                    }
+                        .addOnFailureListener { exception ->
+                            loginButtonState.value = false
+                            _popUpMessage.postValue(exception.message)
+                        }
                 }
-                .addOnFailureListener { exception ->
-                    loginButtonState.value = false
-                    _popUpMessage.postValue(exception.message)
-                }
+            }
         }
     }
 
     fun loginAutomaticallyIfPossible() {
-        if (firebaseAuth.currentUser != null) {
-            _loginAutomatically.value = true
+        if (currentUser != null) {
+            if (currentUser.isEmailVerified) {
+                _loginAutomatically.value = true
+            }
         }
     }
 }

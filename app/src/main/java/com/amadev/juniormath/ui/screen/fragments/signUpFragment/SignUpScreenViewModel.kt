@@ -7,12 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.amadev.juniormath.util.ProvideMessage
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -88,30 +84,15 @@ class SignUpScreenViewModel @Inject constructor(
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     sendVerificationEmail()
-                    verificationEmailSentState.value = true
                     signUpButtonState.value = false
                     _popUpMessage.value = getMessage(verificationEmailSent, context)
+                    verificationEmailSentState.value = true
 
-                } else if (it.isSuccessful.not()) {
-                    try {
-                        throw it.exception!!
-                    } catch (e: FirebaseAuthWeakPasswordException) {
-                        signUpButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: FirebaseAuthUserCollisionException) {
-                        signUpButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: FirebaseAuthException) {
-                        signUpButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: TimeoutException) {
-                        signUpButtonState.value = false
-                        _popUpMessage.value = e.message
-                    } catch (e: Exception) {
-                        signUpButtonState.value = false
-                        _popUpMessage.value = e.message
-                    }
                 }
+            }
+            .addOnFailureListener { exception ->
+                _popUpMessage.value = exception.message
+                signUpButtonState.value = false
             }
     }
 

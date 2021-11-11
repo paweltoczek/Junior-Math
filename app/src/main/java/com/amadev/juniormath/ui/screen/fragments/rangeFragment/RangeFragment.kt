@@ -57,20 +57,21 @@ class RangeFragment : Fragment() {
     @Composable
     fun RangeFragmentUI() {
         JuniorMathTheme {
-            val scrollState = rememberScrollState()
-            val category = arguments?.getString(BundleKeys.Category.name)
+           val category = arguments?.getString(BundleKeys.Category.name)
 
             Column(
                 modifier = Modifier
                     .background(MaterialTheme.colors.surface)
-                    .padding(32.dp)
-                    .verticalScroll(scrollState)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
                     FragmentTitleText(stringResource(id = R.string.category))
@@ -80,7 +81,10 @@ class RangeFragment : Fragment() {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(32.dp, 0.dp)
+                        .height(500.dp)
+                        .padding(32.dp, 0.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     SmallTitleText(stringResource(id = R.string.range))
                     Spacer(modifier = Modifier.height(8.dp))
@@ -90,7 +94,13 @@ class RangeFragment : Fragment() {
                     Spacer(modifier = Modifier.height(24.dp))
                     ToRangeInputField()
                 }
-                Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
                     GoToPracticeFragmentButton()
                 }
             }

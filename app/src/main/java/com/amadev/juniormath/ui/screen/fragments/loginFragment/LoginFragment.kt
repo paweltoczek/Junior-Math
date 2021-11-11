@@ -11,9 +11,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -61,7 +63,7 @@ class LoginFragment : Fragment() {
         findNavController().navigate(R.id.action_loginScreenFragment_to_signUpScreen)
     }
 
-    private fun navigateToCategoryFragment() {
+    private fun navigateToHomeFragment() {
         findNavController().navigate(R.id.action_loginScreenFragment_to_homeFragment)
     }
 
@@ -76,7 +78,7 @@ class LoginFragment : Fragment() {
                 showSnackBar(requireView(), it)
             }
             loginAutomatically.observe(viewLifecycleOwner) {
-                if (it) navigateToCategoryFragment()
+                if (it) navigateToHomeFragment()
             }
         }
     }
@@ -96,6 +98,7 @@ class LoginFragment : Fragment() {
         val passwordInputErrorTextState = loginScreenViewModel.passwordInputErrorTextState.value
         val passwordInputErrorTextValue = loginScreenViewModel.passwordInputErrorTextValue.value
 
+        val scrollState = rememberScrollState()
         JuniorMathTheme {
             Box(
                 modifier = Modifier
@@ -106,7 +109,8 @@ class LoginFragment : Fragment() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight()
-                        .padding(32.dp),
+                        .padding(32.dp)
+                        .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.Start,
                 ) {
@@ -303,7 +307,7 @@ class LoginFragment : Fragment() {
     @Composable
     fun SkipButton() {
         TextButton(
-            onClick = { navigateToCategoryFragment() },
+            onClick = { navigateToHomeFragment() },
             modifier = Modifier
                 .background(Color.Transparent)
                 .padding(0.dp, 8.dp),

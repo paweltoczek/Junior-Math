@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,7 +28,6 @@ import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-
 
 @AndroidEntryPoint
 class StatisticsFragment : Fragment() {
@@ -54,7 +52,7 @@ class StatisticsFragment : Fragment() {
 
     private fun setUpObservers() {
         statisticsFragmentViewModel.apply {
-            popUpMessage.observe(viewLifecycleOwner){
+            popUpMessage.observe(viewLifecycleOwner) {
                 showSnackBar(requireView(), it)
             }
         }
@@ -78,13 +76,12 @@ class StatisticsFragment : Fragment() {
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colors.background)
-                    .verticalScroll(scrollState)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(32.dp),
+                        .padding(32.dp)
+                        .verticalScroll(scrollState),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -103,6 +100,8 @@ class StatisticsFragment : Fragment() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
+
+                        //Addition
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Start,
@@ -111,9 +110,13 @@ class StatisticsFragment : Fragment() {
                             FragmentDescriptionText(string = stringResource(id = R.string.addition))
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-
-                        StatisticsButton(statisticsFragmentViewModel.additionScoreData.value)
+                        StatisticsButton(
+                            statisticsFragmentViewModel.additionScoreData.value,
+                            statisticsFragmentViewModel.additionDataLoaded.value
+                        )
                         Spacer(modifier = Modifier.height(24.dp))
+
+                        //Subtraction
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Start,
@@ -122,8 +125,13 @@ class StatisticsFragment : Fragment() {
                             FragmentDescriptionText(string = stringResource(id = R.string.subtraction))
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        StatisticsButton(statisticsFragmentViewModel.subtractionScoreData.value)
+                        StatisticsButton(
+                            statisticsFragmentViewModel.subtractionScoreData.value,
+                            statisticsFragmentViewModel.subtractionDataLoaded.value
+                        )
                         Spacer(modifier = Modifier.height(24.dp))
+
+                        //Multiplication
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Start,
@@ -132,8 +140,13 @@ class StatisticsFragment : Fragment() {
                             FragmentDescriptionText(string = stringResource(id = R.string.multiplication))
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        StatisticsButton(statisticsFragmentViewModel.multiplicationScoreData.value)
+                        StatisticsButton(
+                            statisticsFragmentViewModel.multiplicationScoreData.value,
+                            statisticsFragmentViewModel.multiplicationDataLoaded.value
+                        )
                         Spacer(modifier = Modifier.height(24.dp))
+
+                        //Division
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Start,
@@ -142,7 +155,10 @@ class StatisticsFragment : Fragment() {
                             FragmentDescriptionText(string = stringResource(id = R.string.division))
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        StatisticsButton(statisticsFragmentViewModel.divisionScoreData.value)
+                        StatisticsButton(
+                            statisticsFragmentViewModel.divisionScoreData.value,
+                            statisticsFragmentViewModel.divisionDataLoaded.value
+                        )
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                 }
@@ -153,20 +169,24 @@ class StatisticsFragment : Fragment() {
 
     @ExperimentalCoroutinesApi
     @Composable
-    fun StatisticsButton(values: UserAnswersModel) {
+    fun StatisticsButton(data: UserAnswersModel, dataReady: Boolean) {
         Button(
             onClick = {},
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxWidth()
-                .wrapContentHeight(),
+                .height(150.dp)
+                .padding(0.dp),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
         ) {
-            HorizontalChart(
-                correctAnswers = values.userCorrectAnswers.toInt(),
-                totalQuestions = values.totalQuestions.toInt()
-            )
+            if (dataReady.not()) {
+                CircularProgressIndicator()
+            } else {
+                HorizontalChart(
+                    correctAnswers = data.userCorrectAnswers.toInt(),
+                    totalQuestions = data.totalQuestions.toInt()
+                )
+            }
         }
     }
 }

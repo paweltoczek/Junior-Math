@@ -11,8 +11,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -91,6 +93,7 @@ class SignUpFragment : Fragment() {
                     modifier = Modifier
                         .fillMaxSize()
                         .background(color = MaterialTheme.colors.background)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     Column(
                         modifier = Modifier
@@ -143,7 +146,8 @@ class SignUpFragment : Fragment() {
             } else {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {

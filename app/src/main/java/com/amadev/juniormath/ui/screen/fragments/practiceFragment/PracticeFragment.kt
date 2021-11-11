@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -92,17 +95,15 @@ class PracticeFragment : Fragment() {
 
     @Composable
     fun PracticeFragmentUI() {
-        val scrollState = rememberScrollState()
-
         val category = arguments?.getString(BundleKeys.Category.name)
 
         JuniorMathTheme {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(32.dp)
                     .background(MaterialTheme.colors.surface)
-                    .verticalScroll(scrollState),
+                    .verticalScroll(rememberScrollState())
+                    .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {

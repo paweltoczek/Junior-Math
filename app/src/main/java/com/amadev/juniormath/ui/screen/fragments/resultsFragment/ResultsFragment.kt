@@ -68,6 +68,7 @@ class ResultsFragment : Fragment() {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Column(
                     modifier = Modifier
