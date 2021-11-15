@@ -1,17 +1,71 @@
 package com.amadev.juniormath.data.repository
 
 import com.amadev.juniormath.data.model.UserAnswersModel
-import kotlinx.coroutines.flow.Flow
+import com.amadev.juniormath.util.Util.encodeFirebaseForbiddenChars
+import com.google.firebase.database.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
 
-interface RealtimeDatabaseRepository {
+class RealtimeDatabaseRepository @Inject constructor(
+    firebaseDatabase: FirebaseDatabase,
+    firebaseUserData: FirebaseUserData
+) {
 
-    fun getUserAdditionScoreData() : Flow<Result<UserAnswersModel?>>
+    companion object {
+        const val REFERENCE = "users"
+    }
 
-    fun getUserSubtractionScoreData() : Flow<Result<UserAnswersModel?>>
+    //User data
+    private val uuid = firebaseUserData.uuid
+    private val userEmail = encodeFirebaseForbiddenChars(firebaseUserData.userEmail)
 
-    fun getUserMultiplicationScoreData() : Flow<Result<UserAnswersModel?>>
+    //Firebase Reference
+    private val firebaseReference =
+        firebaseDatabase.getReference(REFERENCE).child(uuid).child(userEmail)
 
-    fun getUserDivisionScoreData() : Flow<Result<UserAnswersModel?>>
+    @ExperimentalCoroutinesApi
+    fun getUserCategoryScoreData(category : String) = callbackFlow<Result<UserAnswersModel?>> {
+        val ref = firebaseReference.child(category)
 
-    fun getAllScoreData() : Flow<Result<ArrayList<UserAnswersModel?>>>
+        val postListener = object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                this@callbackFlow.trySendBlocking(Result.failure(error.toException()))
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = snapshot.getValue(UserAnswersModel::class.java)
+                this@callbackFlow.trySendBlocking(Result.success(data))
+            }
+        }
+        ref.addValueEventListener(postListener)
+        awaitClose {
+            ref.removeEventListener(postListener)
+        }
+    }
+
+    fun getAllScoreData() = callbackFlow<Result<ArrayList<UserAnswersModel?>>> {
+        val ref = firebaseReference
+        val data = ArrayList<UserAnswersModel?>()
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    data.add(it.getValue(UserAnswersModel::class.java))
+                }
+                this@callbackFlow.trySendBlocking(Result.success(data))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                this@callbackFlow.trySendBlocking(Result.failure(error.toException()))
+            }
+        }
+
+        ref.addValueEventListener(postListener)
+
+        awaitClose {
+            ref.removeEventListener(postListener)
+        }
+    }
 }

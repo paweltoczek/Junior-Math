@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amadev.juniormath.data.model.UserAnswersModel
 import com.amadev.juniormath.data.repository.FirebaseUserData
-import com.amadev.juniormath.data.repository.RealtimeDatabaseRepositoryImpl
+import com.amadev.juniormath.data.repository.RealtimeDatabaseRepository
 import com.amadev.juniormath.util.Categories
 import com.amadev.juniormath.util.ProvideMessage
 import com.amadev.juniormath.util.Util.encodeFirebaseForbiddenChars
@@ -25,7 +25,7 @@ class PracticeFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseDatabase: FirebaseDatabase,
     private val firebaseUserData: FirebaseUserData,
-    private val _realTimeDatabaseRepository: RealtimeDatabaseRepositoryImpl
+    private val _realTimeDatabaseRepository: RealtimeDatabaseRepository
 ) :
     ViewModel(), ProvideMessage {
 
@@ -348,7 +348,7 @@ class PracticeFragmentViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     private fun getUserScoreDataForAddition() {
         viewModelScope.launch {
-            _realTimeDatabaseRepository.getUserAdditionScoreData().collect {
+            _realTimeDatabaseRepository.getUserCategoryScoreData(Categories.Addition.name).collect {
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()
@@ -368,17 +368,18 @@ class PracticeFragmentViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     private fun getUserScoreDataForSubtraction() {
         viewModelScope.launch(Dispatchers.IO) {
-            _realTimeDatabaseRepository.getUserSubtractionScoreData().collect {
-                when {
-                    it.isSuccess -> {
-                        val data = it.getOrNull()
-                        databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
-                        databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
-                    }
+            _realTimeDatabaseRepository.getUserCategoryScoreData(Categories.Subtraction.name)
+                .collect {
+                    when {
+                        it.isSuccess -> {
+                            val data = it.getOrNull()
+                            databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
+                            databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
+                        }
 
-                    it.isFailure -> {
-                        val exception = it.exceptionOrNull()?.message
-                        _popUpMessage.postValue(exception)
+                        it.isFailure -> {
+                            val exception = it.exceptionOrNull()?.message
+                            _popUpMessage.postValue(exception)
                     }
                 }
             }
@@ -388,17 +389,18 @@ class PracticeFragmentViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     private fun getUserScoreDataForMultiplication() {
         viewModelScope.launch(Dispatchers.IO) {
-            _realTimeDatabaseRepository.getUserMultiplicationScoreData().collect {
-                when {
-                    it.isSuccess -> {
-                        val data = it.getOrNull()
-                        databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
-                        databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
-                    }
+            _realTimeDatabaseRepository.getUserCategoryScoreData(Categories.Multiplication.name)
+                .collect {
+                    when {
+                        it.isSuccess -> {
+                            val data = it.getOrNull()
+                            databaseTotalQuestions = data?.totalQuestions?.toInt() ?: 0
+                            databaseCorrectAnswers = data?.userCorrectAnswers?.toInt() ?: 0
+                        }
 
-                    it.isFailure -> {
-                        val exception = it.exceptionOrNull()?.message
-                        _popUpMessage.postValue(exception)
+                        it.isFailure -> {
+                            val exception = it.exceptionOrNull()?.message
+                            _popUpMessage.postValue(exception)
                     }
                 }
             }
@@ -408,7 +410,7 @@ class PracticeFragmentViewModel @Inject constructor(
     @ExperimentalCoroutinesApi
     private fun getUserScoreDataForDivision() {
         viewModelScope.launch(Dispatchers.IO) {
-            _realTimeDatabaseRepository.getUserDivisionScoreData().collect {
+            _realTimeDatabaseRepository.getUserCategoryScoreData(Categories.Division.name).collect {
                 when {
                     it.isSuccess -> {
                         val data = it.getOrNull()

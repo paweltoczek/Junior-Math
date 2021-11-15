@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amadev.juniormath.data.repository.FirebaseUserData
-import com.amadev.juniormath.data.repository.RealtimeDatabaseRepositoryImpl
+import com.amadev.juniormath.data.repository.RealtimeDatabaseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeFragmentViewModel @Inject constructor(
     firebaseUserData: FirebaseUserData,
-    private val _realTimeDatabaseRepository: RealtimeDatabaseRepositoryImpl
+    private val _realTimeDatabaseRepository: RealtimeDatabaseRepository
 ) : ViewModel() {
 
     private val currentUser = firebaseUserData.currentUser

@@ -1,6 +1,7 @@
 package com.amadev.juniormath.ui.screen.fragments.loginFragment
 
 import android.content.Context
+import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
@@ -73,33 +74,25 @@ class LoginFragmentViewModel @Inject constructor(
 
     private fun doLoginWithEmailAndPassword() {
         viewModelScope.launch(Dispatchers.IO) {
-
-            if (currentUser != null) {
-                if (currentUser.isEmailVerified) {
                     firebaseAuth.signInWithEmailAndPassword(
                         emailInput.value.trim(),
                         passwordInput.value.trim()
                     )
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                _loginAutomatically.postValue(true)
-                                loginButtonState.value = false
-                            }
+                        .addOnSuccessListener {
+                            _loginAutomatically.postValue(true)
                         }
                         .addOnFailureListener { exception ->
                             loginButtonState.value = false
                             _popUpMessage.postValue(exception.message)
                         }
                 }
-            }
-        }
+
     }
 
     fun loginAutomaticallyIfPossible() {
         if (currentUser != null) {
-            if (currentUser.isEmailVerified) {
-                _loginAutomatically.value = true
-            }
+            _loginAutomatically.value = true
         }
     }
+
 }
