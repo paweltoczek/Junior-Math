@@ -31,8 +31,7 @@ object FirebaseModule {
     @Provides
     fun provideFirebaseUserData(): FirebaseUserData {
         return FirebaseUserData(
-            FirebaseAuth.getInstance(),
-            FirebaseDatabase.getInstance()
+            FirebaseAuth.getInstance()
         )
     }
 

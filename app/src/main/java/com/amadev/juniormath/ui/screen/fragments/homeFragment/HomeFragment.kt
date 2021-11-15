@@ -36,6 +36,7 @@ import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
 import com.amadev.juniormath.ui.screen.dialogs.logoutDialog.LogoutDialog
+import com.amadev.juniormath.ui.screen.dialogs.verifyEmailDialog.VerifyEmailDialog
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.util.BundleKeys
 import com.amadev.juniormath.util.Categories
@@ -72,7 +73,17 @@ class HomeFragment : Fragment() {
             popUpMessage.observe(viewLifecycleOwner) {
                 showSnackBar(requireView(), it)
             }
+            showVerifyEmailDialog.observe(viewLifecycleOwner) { notVerified ->
+                if (notVerified) {
+                    showVerifyEmailDialog()
+                }
+            }
         }
+    }
+
+    private fun showVerifyEmailDialog() {
+        val dialog = VerifyEmailDialog()
+        dialog.show(childFragmentManager, null)
     }
 
     @ExperimentalCoroutinesApi

@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeFragmentViewModel @Inject constructor(
-    firebaseUserData: FirebaseUserData,
+    private val firebaseUserData: FirebaseUserData,
     private val _realTimeDatabaseRepository: RealtimeDatabaseRepository
 ) : ViewModel() {
 
@@ -29,11 +29,15 @@ class HomeFragmentViewModel @Inject constructor(
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
 
+    private val _showVerifyEmailDialog = MutableLiveData<Boolean>()
+    val showVerifyEmailDialog = _showVerifyEmailDialog
+
     val dataLoaded = mutableStateOf(false)
 
     @ExperimentalCoroutinesApi
     fun getDataFromDatabaseIfPossible() {
-        if (currentUser != null) {
+        if (firebaseUserData.isUserLoggedIn()) {
+            isUserEmailVerified()
             dataLoaded.value = false
             databaseCorrectAnswers.value = 0
             databaseTotalQuestions.value = 0
@@ -63,6 +67,14 @@ class HomeFragmentViewModel @Inject constructor(
                         _popUpMessage.postValue(exception)
                     }
                 }
+            }
+        }
+    }
+
+    private fun isUserEmailVerified() {
+        if (currentUser != null) {
+            if (currentUser.isEmailVerified.not()) {
+                _showVerifyEmailDialog.value = true
             }
         }
     }

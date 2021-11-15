@@ -57,4 +57,7 @@
     <string name="sureWantToLogOut">Sure you want to logout?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="verifyYourEmail">Verify your email</string>
+    <string name="pleaseVerifyYourEmail">Please go to your inbox and verify your email address.</string>
+    <string name="ok">OK</string>
 </resources>

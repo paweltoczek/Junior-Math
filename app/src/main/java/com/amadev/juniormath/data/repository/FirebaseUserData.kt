@@ -1,12 +1,10 @@
 package com.amadev.juniormath.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import javax.inject.Inject
 
 class FirebaseUserData @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
-    val firebaseDatabase: FirebaseDatabase
+    firebaseAuth: FirebaseAuth
 ) {
 
     val currentUser = firebaseAuth.currentUser
@@ -32,10 +30,5 @@ class FirebaseUserData @Inject constructor(
         }
         return isLoggedIn
     }
-
-    fun isCurrentUserEmailVerified(): Boolean {
-        return currentUser?.isEmailVerified == true
-    }
-
 
 }
