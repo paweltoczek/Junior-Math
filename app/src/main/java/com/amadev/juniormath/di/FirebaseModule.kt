@@ -1,6 +1,5 @@
 package com.amadev.juniormath.di
 
-import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.data.repository.RealtimeDatabaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -27,20 +26,10 @@ object FirebaseModule {
         return FirebaseDatabase.getInstance()
     }
 
-    @Singleton
-    @Provides
-    fun provideFirebaseUserData(): FirebaseUserData {
-        return FirebaseUserData(
-            FirebaseAuth.getInstance()
-        )
-    }
 
     @Singleton
     @Provides
     fun provideDatabaseRepository(): RealtimeDatabaseRepository {
-        return RealtimeDatabaseRepository(
-            FirebaseDatabase.getInstance(),
-            provideFirebaseUserData()
-        )
+        return RealtimeDatabaseRepository(FirebaseDatabase.getInstance(), FirebaseAuth.getInstance())
     }
 }

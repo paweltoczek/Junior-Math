@@ -6,11 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amadev.juniormath.data.model.UserAnswersModel
-import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.data.repository.RealtimeDatabaseRepository
 import com.amadev.juniormath.util.Categories
 import com.amadev.juniormath.util.ProvideMessage
 import com.amadev.juniormath.util.Util.encodeFirebaseForbiddenChars
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class PracticeFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseDatabase: FirebaseDatabase,
-    private val firebaseUserData: FirebaseUserData,
+    private val firebaseAuth: FirebaseAuth,
     private val _realTimeDatabaseRepository: RealtimeDatabaseRepository
 ) :
     ViewModel(), ProvideMessage {
@@ -40,8 +40,8 @@ class PracticeFragmentViewModel @Inject constructor(
 
     // User Details
     private val userEmail =
-        encodeFirebaseForbiddenChars(firebaseUserData.userEmail)
-    private val uuid = firebaseUserData.uuid
+        encodeFirebaseForbiddenChars(firebaseAuth.currentUser?.email ?: "")
+    private val uuid = firebaseAuth.currentUser?.uid ?: ""
 
     //Database
     var databaseTotalQuestions = 0
@@ -213,28 +213,28 @@ class PracticeFragmentViewModel @Inject constructor(
             Categories.Addition.name -> {
                 correctAnswer.value = addition()
                 operator.value = ADDITION_OPERATOR
-                setUpAnswers(correctAnswer.value)
+                setUpButtonAnswers(correctAnswer.value)
             }
             Categories.Subtraction.name -> {
                 correctAnswer.value = subtract()
                 operator.value = SUBTRACTION_OPERATOR
-                setUpAnswers(correctAnswer.value)
+                setUpButtonAnswers(correctAnswer.value)
 
             }
             Categories.Multiplication.name -> {
                 correctAnswer.value = multiplication()
                 operator.value = MULTIPLICATION_OPERATOR
-                setUpAnswers(correctAnswer.value)
+                setUpButtonAnswers(correctAnswer.value)
             }
             Categories.Division.name -> {
                 correctAnswer.value = division()
                 operator.value = DIVISION_OPERATOR
-                setUpAnswers(correctAnswer.value)
+                setUpButtonAnswers(correctAnswer.value)
             }
         }
     }
 
-    private fun setUpAnswers(correctAnswer: Int) {
+    private fun setUpButtonAnswers(correctAnswer: Int) {
         val answersArrayList = ArrayList<Int>()
 
         answersArrayList.clear()
@@ -271,6 +271,7 @@ class PracticeFragmentViewModel @Inject constructor(
             compareUserInputWithCorrectAnswer()
             updateButtonStates()
             clearUserAnswerInput()
+            getNextQuestion()
             writeDataToDatabaseIfPossible()
             _finishedGame.value = true
         } else {
@@ -294,7 +295,7 @@ class PracticeFragmentViewModel @Inject constructor(
 
     @ExperimentalCoroutinesApi
     fun readFromDatabaseIfPossible() {
-        if (firebaseUserData.isUserLoggedIn()) {
+        if (firebaseAuth.currentUser != null) {
             getDatabaseCategoryScoreData()
         }
     }
@@ -318,7 +319,7 @@ class PracticeFragmentViewModel @Inject constructor(
     }
 
     private fun writeDataToDatabaseIfPossible() {
-        if (firebaseUserData.isUserLoggedIn()) {
+        if (firebaseAuth.currentUser != null) {
             val ref = firebaseDatabase.getReference(USERS)
                 .child(uuid)
                 .child(userEmail)

@@ -2,6 +2,7 @@ package com.amadev.juniormath.data.repository
 
 import com.amadev.juniormath.data.model.UserAnswersModel
 import com.amadev.juniormath.util.Util.encodeFirebaseForbiddenChars
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 class RealtimeDatabaseRepository @Inject constructor(
     firebaseDatabase: FirebaseDatabase,
-    firebaseUserData: FirebaseUserData
+    firebaseAuth: FirebaseAuth,
 ) {
 
     companion object {
@@ -19,8 +20,8 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     //User data
-    private val uuid = firebaseUserData.uuid
-    private val userEmail = encodeFirebaseForbiddenChars(firebaseUserData.userEmail)
+    private val uuid = firebaseAuth.currentUser?.uid ?: ""
+    private val userEmail = encodeFirebaseForbiddenChars(firebaseAuth.currentUser?.email ?: "")
 
     //Firebase Reference
     private val firebaseReference =
@@ -46,6 +47,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
+    @ExperimentalCoroutinesApi
     fun getAllScoreData() = callbackFlow<Result<ArrayList<UserAnswersModel?>>> {
         val ref = firebaseReference
         val data = ArrayList<UserAnswersModel?>()

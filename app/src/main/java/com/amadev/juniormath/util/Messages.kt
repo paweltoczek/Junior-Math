@@ -39,7 +39,7 @@ interface ProvideMessage {
     val emailSent: Messages.EmailSent
         get() = Messages.EmailSent
 
-    val pleaseVerifyEmailSent: Messages.PleaseVerifyEmailSent
+    val pleaseVerifyYourEmail: Messages.PleaseVerifyEmailSent
         get() = Messages.PleaseVerifyEmailSent
 
     val selectYourAnswer: Messages.SelectYourAnswer
@@ -60,8 +60,8 @@ interface ProvideMessage {
             is Messages.PasswordsMustBeSame -> context.getString(R.string.passwordsMustBeSame)
             is Messages.VerificationEmailSent -> context.getString(R.string.verificationEmailSent)
             is Messages.FailedToCreateAccount -> context.getString(R.string.failedToCreateAccount)
+            is Messages.PleaseVerifyEmailSent -> context.getString(R.string.pleaseVerifyYourEmail)
             is Messages.EmailSent -> context.getString(R.string.emailSent)
-            is Messages.PleaseVerifyEmailSent -> context.getString(R.string.pleaseVerifyEmailSent)
             is Messages.SelectYourAnswer -> context.getString(R.string.selectYourAnswer)
             is Messages.DataSaved -> context.getString(R.string.dataSaved)
             is Messages.SomethingWentWrong -> context.getString(R.string.somethingWentWrong)

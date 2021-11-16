@@ -1,6 +1,8 @@
 package com.amadev.juniormath.ui.screen.fragments.homeFragment
 
 import HorizontalChart
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +38,6 @@ import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
 import com.amadev.juniormath.ui.screen.dialogs.logoutDialog.LogoutDialog
-import com.amadev.juniormath.ui.screen.dialogs.verifyEmailDialog.VerifyEmailDialog
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.util.BundleKeys
 import com.amadev.juniormath.util.Categories
@@ -73,23 +74,14 @@ class HomeFragment : Fragment() {
             popUpMessage.observe(viewLifecycleOwner) {
                 showSnackBar(requireView(), it)
             }
-            showVerifyEmailDialog.observe(viewLifecycleOwner) { notVerified ->
-                if (notVerified) {
-                    showVerifyEmailDialog()
-                }
-            }
         }
-    }
-
-    private fun showVerifyEmailDialog() {
-        val dialog = VerifyEmailDialog()
-        dialog.show(childFragmentManager, null)
     }
 
     @ExperimentalCoroutinesApi
     private fun setUpViewModel() {
         homeFragmentViewModel.apply {
             getDataFromDatabaseIfPossible()
+            isUserLoggedIn()
         }
     }
 
@@ -106,7 +98,7 @@ class HomeFragment : Fragment() {
     private fun setUpOnBackPressedCallback() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (homeFragmentViewModel.isUserLogged) {
+                if (homeFragmentViewModel.isUserLogged.value) {
                     activity?.finishAffinity()
                 } else {
                     navigateToLoginFragment()
@@ -134,7 +126,7 @@ class HomeFragment : Fragment() {
             Scaffold(
                 scaffoldState = state,
                 drawerContent = {
-                    NavDrawer()
+                    NavDrawerUI()
                 },
                 content = {
                     Column(
@@ -153,13 +145,12 @@ class HomeFragment : Fragment() {
                             HomeScreenUI(state, coroutineScope)
                         }
                     }
-
                 })
         }
     }
 
     @Composable
-    fun NavDrawer() {
+    fun NavDrawerUI() {
         JuniorMathTheme {
             Column(
                 modifier = Modifier
@@ -178,7 +169,7 @@ class HomeFragment : Fragment() {
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     Text(
-                        text = homeFragmentViewModel.userEmail,
+                        text = homeFragmentViewModel.userEmail.value,
                         color = MaterialTheme.colors.primary,
                         style = MaterialTheme.typography.body1,
                         fontSize = 24.sp,
@@ -212,7 +203,11 @@ class HomeFragment : Fragment() {
                     ) {
                         NavButton(buttonText = stringResource(id = R.string.support))
                         NavButton(buttonText = stringResource(id = R.string.feedback))
-                        NavButton(buttonText = stringResource(id = R.string.logout))
+                        if (homeFragmentViewModel.isUserLogged.value) {
+                            NavButton(buttonText = stringResource(id = R.string.logout))
+                        } else {
+                            NavButton(buttonText = stringResource(id = R.string.login))
+                        }
                     }
                     Column {
                         TermsOfUseText()
@@ -236,10 +231,25 @@ class HomeFragment : Fragment() {
     @Composable
     fun NavButton(buttonText: String) {
         val logoutText = stringResource(id = R.string.logout)
+        val loginText = stringResource(id = R.string.login)
+        val supportText = stringResource(id = R.string.support)
+        val feedbackText = stringResource(id = R.string.feedback)
+
         Button(
             onClick = {
-                if (buttonText == logoutText) {
-                    showLogoutDialog()
+                when (buttonText) {
+                    logoutText -> {
+                        showLogoutDialog()
+                    }
+                    loginText -> {
+                        navigateToLoginFragment()
+                    }
+                    supportText -> {
+                        sendEmailTo(supportText)
+                    }
+                    feedbackText -> {
+                        sendEmailTo(feedbackText)
+                    }
                 }
             },
             shape = RoundedCornerShape(50),
@@ -255,6 +265,24 @@ class HomeFragment : Fragment() {
                 fontSize = 16.sp
             )
         }
+    }
+
+    private fun sendEmailTo(text: String) {
+
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("simpleapsdeveloper@gmail.com"))
+            putExtra(Intent.EXTRA_SUBJECT, text + " " + getString(R.string.app_name))
+            putExtra(Intent.EXTRA_TEXT, getString(R.string.writeYourMessage))
+
+            try {
+                startActivity(Intent.createChooser(intent, "Choose Email Client..."))
+            } catch (e: Exception) {
+                showSnackBar(requireView(), "${e.message}")
+            }
+        }
+
     }
 
     @Composable
@@ -345,7 +373,7 @@ class HomeFragment : Fragment() {
 
         Button(
             onClick = {
-                if (homeFragmentViewModel.isUserLogged) {
+                if (homeFragmentViewModel.isUserLogged.value) {
                     navigateToStatisticsFragment()
                 } else {
                     showSnackBar(requireView(), availableOnlyForLogged)
@@ -358,7 +386,7 @@ class HomeFragment : Fragment() {
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(MaterialTheme.colors.secondary)
         ) {
-            if (homeFragmentViewModel.isUserLogged.not()) {
+            if (homeFragmentViewModel.isUserLogged.value.not()) {
                 FragmentDescriptionText(string = availableOnlyForLogged)
             } else {
                 if (homeFragmentViewModel.dataLoaded.value) {
@@ -421,7 +449,7 @@ class HomeFragment : Fragment() {
 
     @Composable
     fun WelcomeText() {
-        val userEmail = homeFragmentViewModel.userEmail ?: ""
+        val userEmail = homeFragmentViewModel.userEmail.value
 
         Text(
             buildAnnotatedString {

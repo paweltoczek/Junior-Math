@@ -1,13 +1,11 @@
 package com.amadev.juniormath.ui.screen.fragments.loginFragment
 
 import android.content.Context
-import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.util.ProvideMessage
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,10 +18,9 @@ import javax.inject.Inject
 class LoginFragmentViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val firebaseAuth: FirebaseAuth,
-    firebaseUserData: FirebaseUserData
 ) : ViewModel(), ProvideMessage {
 
-    private val currentUser = firebaseUserData.currentUser
+    private val currentUser = firebaseAuth.currentUser
 
     val emailInput = mutableStateOf("")
     val emailInputErrorTextState = mutableStateOf(false)
@@ -86,10 +83,10 @@ class LoginFragmentViewModel @Inject constructor(
                             _popUpMessage.postValue(exception.message)
                         }
                 }
-
     }
 
     fun loginAutomaticallyIfPossible() {
+        firebaseAuth.currentUser?.reload()
         if (currentUser != null) {
             _loginAutomatically.value = true
         }
