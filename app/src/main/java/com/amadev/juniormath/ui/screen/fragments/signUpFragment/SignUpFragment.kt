@@ -49,9 +49,7 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
-
             setUpObservers()
-
             setContent {
                 SignUpScreen()
             }
@@ -68,19 +66,14 @@ class SignUpFragment : Fragment() {
         }
     }
 
-
     @Preview
     @Composable
     fun SignUpScreen() {
-
         val verificationEmailSentState = signUpScreenViewModel.verificationEmailSentState.value
-
         val emailInputErrorTextState = signUpScreenViewModel.emailInputErrorTextState.value
         val emailInputErrorTextValue = signUpScreenViewModel.emailInputErrorTextValue.value
-
         val passwordInputErrorTextState = signUpScreenViewModel.passwordInputErrorTextState.value
         val passwordInputErrorTextValue = signUpScreenViewModel.passwordInputErrorTextValue.value
-
         val repeatPasswordInputErrorTextState =
             signUpScreenViewModel.repeatPasswordInputErrorTextState.value
         val repeatPasswordInputErrorTextValue =
@@ -89,17 +82,11 @@ class SignUpFragment : Fragment() {
         JuniorMathTheme {
 
             if (!verificationEmailSentState) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = MaterialTheme.colors.background)
-                        .verticalScroll(rememberScrollState())
-                ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .padding(32.dp),
+                            .fillMaxSize()
+                            .padding(32.dp)
+                            .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.Start,
                     ) {
@@ -107,10 +94,10 @@ class SignUpFragment : Fragment() {
                             SignUpText()
                             SubText()
                         }
-
                         Column(
-                            modifier = Modifier.wrapContentHeight(),
-                            horizontalAlignment = Alignment.End
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
                             EmailTextField()
                             if (emailInputErrorTextState) {
@@ -124,25 +111,11 @@ class SignUpFragment : Fragment() {
                             if (repeatPasswordInputErrorTextState) {
                                 ErrorText(repeatPasswordInputErrorTextValue)
                             }
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(0.dp, 8.dp),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                SignUpButton()
-                            }
                         }
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            verticalArrangement = Arrangement.Bottom,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            SignUpButton()
                         }
                     }
-                }
             } else {
                 Column(
                     modifier = Modifier

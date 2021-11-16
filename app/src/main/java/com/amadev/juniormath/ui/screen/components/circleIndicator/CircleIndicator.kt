@@ -34,6 +34,8 @@ fun CircleIndicator(
     canvasSize: Dp = 75.dp,
     backgroundColor: Color = MaterialTheme.colors.secondary,
     foregroundColor: Color = MaterialTheme.colors.primary,
+    foregroundWidth: Float = 20f,
+    backgroundWidth : Float = 15f,
     questionNo: Int = 1
 ) {
 
@@ -49,12 +51,14 @@ fun CircleIndicator(
                 val componentSize = size * 0.8f
                 backgroundIndicator(
                     componentSize = componentSize,
-                    backgroundColor
+                    backgroundColor,
+                    backgroundWidth
                 )
                 foregroundIndicator(
                     sweepAngle = sweepAngle,
                     componentSize = componentSize,
-                    foregroundColor
+                    foregroundColor,
+                    foregroundWidth
                 )
             },
         verticalArrangement = Arrangement.Center,
@@ -66,7 +70,8 @@ fun CircleIndicator(
 
 fun DrawScope.backgroundIndicator(
     componentSize: Size,
-    color: Color
+    color: Color,
+    backgroundWidth: Float
 ) {
     drawArc(
         size = componentSize,
@@ -75,7 +80,7 @@ fun DrawScope.backgroundIndicator(
         sweepAngle = 360f,
         useCenter = false,
         style = Stroke(
-            width = 15f,
+            width = backgroundWidth,
             cap = StrokeCap.Round
         ),
         topLeft = Offset(
@@ -88,7 +93,8 @@ fun DrawScope.backgroundIndicator(
 fun DrawScope.foregroundIndicator(
     sweepAngle: Float,
     componentSize: Size,
-    color: Color
+    color: Color,
+    foregroundWidth: Float
 ) {
     drawArc(
         size = componentSize,
@@ -97,7 +103,7 @@ fun DrawScope.foregroundIndicator(
         sweepAngle = sweepAngle,
         useCenter = false,
         style = Stroke(
-            width = 20f,
+            width = foregroundWidth,
             cap = StrokeCap.Round
         ),
         topLeft = Offset(

@@ -48,7 +48,7 @@ class WelcomeFragment : Fragment() {
     private fun navigateToLoginScreen() {
         Handler(Looper.myLooper()!!).postDelayed({
             findNavController().navigate(R.id.action_welcomeScreen_to_loginScreenFragment)
-        },2500)
+        }, 2500)
     }
 
     @Composable
@@ -73,7 +73,5 @@ class WelcomeFragment : Fragment() {
             }
         }
     }
-
-
 
 }

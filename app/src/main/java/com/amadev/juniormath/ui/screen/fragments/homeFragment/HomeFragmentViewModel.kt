@@ -1,12 +1,15 @@
 package com.amadev.juniormath.ui.screen.fragments.homeFragment
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amadev.juniormath.data.repository.FirebaseUserData
 import com.amadev.juniormath.data.repository.RealtimeDatabaseRepository
+import com.amadev.juniormath.util.ProvideMessage
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -15,37 +18,36 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeFragmentViewModel @Inject constructor(
-    private val firebaseUserData: FirebaseUserData,
-    private val _realTimeDatabaseRepository: RealtimeDatabaseRepository
-) : ViewModel() {
+    @ApplicationContext private val context : Context,
+    private val _realTimeDatabaseRepository: RealtimeDatabaseRepository,
+    private val firebaseAuth: FirebaseAuth,
+) : ViewModel(), ProvideMessage {
 
-    private val currentUser = firebaseUserData.currentUser
-    val isUserLogged = firebaseUserData.isUserLoggedIn()
-    val userEmail = firebaseUserData.userEmail
-
+    val isUserLogged = mutableStateOf(false)
+    val userEmail = mutableStateOf(firebaseAuth.currentUser?.email ?: "")
     val databaseTotalQuestions = mutableStateOf(0)
     val databaseCorrectAnswers = mutableStateOf(0)
 
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
 
-    private val _showVerifyEmailDialog = MutableLiveData<Boolean>()
-    val showVerifyEmailDialog = _showVerifyEmailDialog
+
+    fun isUserLoggedIn() {
+        isUserLogged.value = firebaseAuth.currentUser != null
+    }
 
     val dataLoaded = mutableStateOf(false)
 
     @ExperimentalCoroutinesApi
     fun getDataFromDatabaseIfPossible() {
-        if (firebaseUserData.isUserLoggedIn()) {
+        if (firebaseAuth.currentUser != null) {
             isUserEmailVerified()
             dataLoaded.value = false
             databaseCorrectAnswers.value = 0
             databaseTotalQuestions.value = 0
-
             getUserScoreData()
         }
     }
-
 
     @ExperimentalCoroutinesApi
     private fun getUserScoreData() {
@@ -72,11 +74,12 @@ class HomeFragmentViewModel @Inject constructor(
     }
 
     private fun isUserEmailVerified() {
-        if (currentUser != null) {
-            if (currentUser.isEmailVerified.not()) {
-                _showVerifyEmailDialog.value = true
+        if(firebaseAuth.currentUser != null) {
+            if (firebaseAuth.currentUser!!.isEmailVerified.not()) {
+                _popUpMessage.value = getMessage(pleaseVerifyYourEmail, context)
             }
         }
     }
+
 
 }

@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -68,7 +66,6 @@ class ResultsFragment : Fragment() {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background)
-                    .verticalScroll(rememberScrollState())
             ) {
                 Column(
                     modifier = Modifier
@@ -91,7 +88,12 @@ class ResultsFragment : Fragment() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        CircleIndicator(canvasSize = 100.dp ,questionNo = resultsFragmentViewModel.userAnswers.value)
+                        CircleIndicator(
+                            canvasSize = 200.dp,
+                            questionNo = resultsFragmentViewModel.userAnswers.value,
+                            backgroundWidth = 40f,
+                            foregroundWidth = 50f
+                        )
                     }
                     Column(
                         modifier = Modifier
@@ -100,13 +102,19 @@ class ResultsFragment : Fragment() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
                     ) {
-                        SmallTitleText(string = stringResource(id = R.string.totalQuestion))
+                        SmallTitleText(
+                            string = stringResource(id = R.string.totalQuestion),
+                            fontSize = 18.sp
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        FragmentDescriptionText(string = "15")
+                        FragmentDescriptionText(string = "15", fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(24.dp))
-                        SmallTitleText(string = stringResource(id = R.string.correctAnswers))
+                        SmallTitleText(
+                            string = stringResource(id = R.string.correctAnswers),
+                            fontSize = 18.sp
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
-                        FragmentDescriptionText(string = "$userCorrectAnswers")
+                        FragmentDescriptionText(string = "$userCorrectAnswers", fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(24.dp))
                     }
                     Column(

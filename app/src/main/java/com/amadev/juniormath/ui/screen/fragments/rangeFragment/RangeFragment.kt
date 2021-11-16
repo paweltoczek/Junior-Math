@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -86,9 +87,9 @@ class RangeFragment : Fragment() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    SmallTitleText(stringResource(id = R.string.range))
+                    SmallTitleText(stringResource(id = R.string.range), 18.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    SmallOverviewText(stringResource(id = R.string.typeInThe))
+                    SmallOverviewText(stringResource(id = R.string.typeInThe), 14.sp)
                     Spacer(modifier = Modifier.height(24.dp))
                     FromRangeInputField()
                     Spacer(modifier = Modifier.height(24.dp))

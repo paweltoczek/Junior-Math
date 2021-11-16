@@ -1,5 +1,6 @@
 package com.amadev.juniormath.ui.screen.dialogs.logoutDialog
 
+import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LogoutDialog : DialogFragment() {
 
-
     private val logoutDialogViewModel: LogoutDialogViewModel by viewModels()
 
     override fun onCreateView(
@@ -45,8 +45,10 @@ class LogoutDialog : DialogFragment() {
     }
 
     private fun logOut() {
-        logoutDialogViewModel.logout()
-        navigateToWelcomeScreen()
+        logoutDialogViewModel.apply {
+            logout()
+            navigateToWelcomeScreen()
+        }
     }
 
     private fun navigateToWelcomeScreen() {
