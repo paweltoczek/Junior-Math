@@ -8,22 +8,25 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,7 +69,10 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    @Preview
+    private fun showTermsOfUsePrivacyPolicyDialog() {
+
+    }
+
     @Composable
     fun SignUpScreen() {
         val verificationEmailSentState = signUpScreenViewModel.verificationEmailSentState.value
@@ -111,6 +117,7 @@ class SignUpFragment : Fragment() {
                             if (repeatPasswordInputErrorTextState) {
                                 ErrorText(repeatPasswordInputErrorTextValue)
                             }
+                            TermsNPolicy()
                         }
                         Column(modifier = Modifier.fillMaxWidth()) {
                             SignUpButton()
@@ -129,6 +136,40 @@ class SignUpFragment : Fragment() {
                 }
             }
         }
+    }
+
+    @Preview
+    @Composable
+    fun TermsNPolicy() {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AcceptTermsOfUseAndPrivacyPolicyCheckBox()
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                modifier = Modifier.clickable(enabled = true, role = Role.Checkbox) {
+                    showTermsOfUsePrivacyPolicyDialog()
+                },
+                text = stringResource(id = R.string.iAcceptTermsOfUseAndPrivacyPolicy),
+                style = TextStyle(textDecoration = TextDecoration.Underline),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+        }
+    }
+
+    @Composable
+    fun AcceptTermsOfUseAndPrivacyPolicyCheckBox() {
+        val boxState = signUpScreenViewModel.termsPolicyCheckBoxState
+        Checkbox(
+            checked = boxState.value, onCheckedChange = {
+                boxState.value = !boxState.value
+            },
+            colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colors.primary)
+        )
     }
 
     @Composable

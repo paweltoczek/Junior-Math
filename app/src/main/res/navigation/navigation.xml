@@ -10,7 +10,9 @@
         android:label="WelcomeScreen" >
         <action
             android:id="@+id/action_welcomeScreen_to_loginScreenFragment"
-            app:destination="@id/loginScreenFragment" />
+            app:destination="@id/loginScreenFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/loginScreenFragment"
@@ -18,10 +20,14 @@
         android:label="LoginScreenFragment" >
         <action
             android:id="@+id/action_loginScreenFragment_to_signUpScreen"
-            app:destination="@id/signUpScreen" />
+            app:destination="@id/signUpScreen"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_loginScreenFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/signUpScreen"
@@ -29,7 +35,9 @@
         android:label="SignUpScreen" >
         <action
             android:id="@+id/action_signUpScreen_to_loginScreenFragment"
-            app:destination="@id/loginScreenFragment" />
+            app:destination="@id/loginScreenFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -37,16 +45,24 @@
         android:label="HomeFragment" >
         <action
             android:id="@+id/action_homeFragment_to_rangeFragment"
-            app:destination="@id/rangeFragment" />
+            app:destination="@id/rangeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_homeFragment_to_statisticsFragment"
-            app:destination="@id/statisticsFragment" />
+            app:destination="@id/statisticsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_homeFragment_to_loginScreenFragment"
-            app:destination="@id/loginScreenFragment" />
+            app:destination="@id/loginScreenFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_homeFragment_to_welcomeScreen"
-            app:destination="@id/welcomeScreen" />
+            app:destination="@id/welcomeScreen"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/rangeFragment"
@@ -54,7 +70,9 @@
         android:label="RangeFragment" >
         <action
             android:id="@+id/action_rangeFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_rangeFragment_to_practiceFragment"
             app:destination="@id/practiceFragment" />
@@ -65,10 +83,14 @@
         android:label="PracticeFragment" >
         <action
             android:id="@+id/action_practiceFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/action_practiceFragment_to_resultsFragment"
-            app:destination="@id/resultsFragment" />
+            app:destination="@id/resultsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/resultsFragment"
@@ -76,7 +98,9 @@
         android:label="ResultsFragment" >
         <action
             android:id="@+id/action_resultsFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/statisticsFragment"
@@ -84,6 +108,8 @@
         android:label="StatisticsFragment" >
         <action
             android:id="@+id/action_statisticsFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
 </navigation>

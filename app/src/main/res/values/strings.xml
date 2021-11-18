@@ -61,4 +61,6 @@
     <string name="pleaseVerifyYourEmail">Please go to your inbox and verify your email address.</string>
     <string name="ok">OK</string>
     <string name="writeYourMessage">Write your message.</string>
+    <string name="iAcceptTermsOfUseAndPrivacyPolicy"><![CDATA[I accept Terms Of Use & Privacy Policy.]]></string>
+    <string name="acceptTermOfUseRequired">Accept terms of use and privacy policy required.</string>
 </resources>

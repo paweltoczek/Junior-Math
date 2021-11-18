@@ -123,7 +123,6 @@ class PracticeFragmentViewModel @Inject constructor(
         }
     }
 
-
     private fun compareUserInputWithCorrectAnswer() {
         if (userAnswerInput.value.toInt() == correctAnswer.value) userCorrectAnswers.value ++
     }
@@ -266,6 +265,13 @@ class PracticeFragmentViewModel @Inject constructor(
         }
     }
 
+    private fun isAnswerSelected(): Boolean {
+        return !(!button1State.value
+                && !button2State.value
+                && !button3State.value
+                && !button4State.value)
+    }
+
     fun validateUserInput() {
         if (isAnswerSelected()) {
             if (currentQuestion.value == TOTAL_QUESTIONS) {
@@ -344,13 +350,6 @@ class PracticeFragmentViewModel @Inject constructor(
                     _popUpMessage.value = it.message
                 }
         }
-    }
-
-    private fun isAnswerSelected(): Boolean {
-        return !(!button1State.value
-                && !button4State.value
-                && !button3State.value
-                && !button4State.value)
     }
 
     @ExperimentalCoroutinesApi

@@ -16,6 +16,7 @@ sealed class Messages {
     object SelectYourAnswer : Messages()
     object DataSaved : Messages()
     object SomethingWentWrong : Messages()
+    object YouNeedToAcceptTermsOfUseAndPrivacyPolicy : Messages()
 }
 
 
@@ -51,6 +52,9 @@ interface ProvideMessage {
     val somethingWentWrong: Messages.SomethingWentWrong
         get() = Messages.SomethingWentWrong
 
+    val acceptTermsOfUse: Messages.YouNeedToAcceptTermsOfUseAndPrivacyPolicy
+        get() = Messages.YouNeedToAcceptTermsOfUseAndPrivacyPolicy
+
     fun getMessage(message: Messages, context: Context) =
         when (message) {
             is Messages.FieldCantBeEmpty -> context.getString(R.string.fieldCantBeEmpty)
@@ -65,6 +69,7 @@ interface ProvideMessage {
             is Messages.SelectYourAnswer -> context.getString(R.string.selectYourAnswer)
             is Messages.DataSaved -> context.getString(R.string.dataSaved)
             is Messages.SomethingWentWrong -> context.getString(R.string.somethingWentWrong)
+            is Messages.YouNeedToAcceptTermsOfUseAndPrivacyPolicy -> context.getString(R.string.acceptTermOfUseRequired)
         }
 
 

@@ -36,6 +36,8 @@ class SignUpScreenViewModel @Inject constructor(
     private val _popUpMessage = MutableLiveData<String>()
     val popUpMessage = _popUpMessage
 
+    val termsPolicyCheckBoxState = mutableStateOf(false)
+
     fun onEmailInputChanged(input: String) {
         emailInput.value = input
         emailInputErrorTextState.value = false
@@ -70,8 +72,12 @@ class SignUpScreenViewModel @Inject constructor(
                 repeatPasswordInputErrorTextValue.value = getMessage(passwordsMustBeSame, context)
             }
             else -> {
-                signUpButtonState.value = true
-                createUserWithEmailAndPassword()
+                if (!termsPolicyCheckBoxState.value) {
+                    _popUpMessage.value = getMessage(acceptTermsOfUse, context)
+                } else {
+                    signUpButtonState.value = true
+                    createUserWithEmailAndPassword()
+                }
             }
         }
     }
