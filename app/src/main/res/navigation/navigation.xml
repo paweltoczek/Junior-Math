@@ -9,10 +9,8 @@
         android:name="com.amadev.juniormath.ui.screen.fragments.welcomeFragment.WelcomeFragment"
         android:label="WelcomeScreen" >
         <action
-            android:id="@+id/action_welcomeScreen_to_loginScreenFragment"
-            app:destination="@id/loginScreenFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out" />
+            android:id="@+id/action_welcomeScreen_to_termsOfUsePrivacyPolicyFragment"
+            app:destination="@id/termsOfUsePrivacyPolicyFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginScreenFragment"
@@ -91,6 +89,9 @@
             app:destination="@id/resultsFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_practiceFragment_to_rangeFragment"
+            app:destination="@id/rangeFragment" />
     </fragment>
     <fragment
         android:id="@+id/resultsFragment"
@@ -101,6 +102,9 @@
             app:destination="@id/homeFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/action_resultsFragment_to_homeFragment2"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/statisticsFragment"
@@ -111,5 +115,13 @@
             app:destination="@id/homeFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/termsOfUsePrivacyPolicyFragment"
+        android:name="com.amadev.juniormath.ui.screen.fragments.termsOfUsePrivacyPolicy.TermsOfUsePrivacyPolicyFragment"
+        android:label="TermsOfUsePrivacyPolicyFragment" >
+        <action
+            android:id="@+id/action_termsOfUsePrivacyPolicyFragment_to_loginScreenFragment"
+            app:destination="@id/loginScreenFragment" />
     </fragment>
 </navigation>

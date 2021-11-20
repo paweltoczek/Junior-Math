@@ -6,6 +6,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,8 +47,22 @@ class ResultsFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 ResultFragmentUI()
+                setUpOnBackPressedCallback()
             }
         }
+    }
+
+    private fun setUpOnBackPressedCallback() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigateToRangeFragment()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+
+    private fun navigateToRangeFragment() {
+        findNavController().navigate(R.id.action_rangeFragment_to_homeFragment)
     }
 
     @Preview
@@ -141,7 +156,7 @@ class ResultsFragment : Fragment() {
             shape = RoundedCornerShape(5.dp),
         ) {
             Text(
-                text = stringResource(id = R.string.goToLoginPage),
+                text = stringResource(id = R.string.goToHomePage),
                 fontSize = 18.sp,
                 color = MaterialTheme.colors.primary
             )

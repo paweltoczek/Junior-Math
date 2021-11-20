@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -60,6 +62,10 @@ class PracticeFragment : Fragment() {
         }
     }
 
+    private fun navigateToRangeFragment() {
+        findNavController().navigate(R.id.action_practiceFragment_to_rangeFragment)
+    }
+
     private fun setUpObservers() {
         practiceFragmentViewModel.apply {
             popUpMessage.observe(viewLifecycleOwner) {
@@ -98,6 +104,9 @@ class PracticeFragment : Fragment() {
         val category = arguments?.getString(BundleKeys.Category.name)
 
         JuniorMathTheme {
+            BackHandler(enabled = true) {
+                navigateToRangeFragment()
+            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()

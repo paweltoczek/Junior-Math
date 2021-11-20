@@ -76,7 +76,13 @@ class LoginFragmentViewModel @Inject constructor(
                         passwordInput.value.trim()
                     )
                         .addOnSuccessListener {
-                            _loginAutomatically.postValue(true)
+                            if (firebaseAuth.currentUser != null) {
+                                if (firebaseAuth.currentUser!!.isEmailVerified) {
+                                    _loginAutomatically.postValue(true)
+                                } else {
+                                    _popUpMessage.value = getMessage(verifyEmailSent, context)
+                                }
+                            }
                         }
                         .addOnFailureListener { exception ->
                             loginButtonState.value = false
@@ -88,7 +94,9 @@ class LoginFragmentViewModel @Inject constructor(
     fun loginAutomaticallyIfPossible() {
         firebaseAuth.currentUser?.reload()
         if (currentUser != null) {
-            _loginAutomatically.value = true
+            if (firebaseAuth.currentUser!!.isEmailVerified) {
+                _loginAutomatically.value = true
+            }
         }
     }
 
