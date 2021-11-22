@@ -122,8 +122,7 @@ class PracticeFragmentViewModel @Inject constructor(
             }
         }
     }
-
-
+    
     private fun compareUserInputWithCorrectAnswer() {
         if (userAnswerInput.value.toInt() == correctAnswer.value) userCorrectAnswers.value ++
     }
@@ -172,7 +171,8 @@ class PracticeFragmentViewModel @Inject constructor(
             val firstNumber = (fromRange.value..toRange.value).random()
             val secondNumber = (fromRange.value..toRange.value).random()
 
-            if (firstNumber / secondNumber != 0) {
+            if (firstNumber >
+                secondNumber) {
                 if (firstNumber.toDouble() % secondNumber.toDouble() == 0.00) {
                     questionFirstNumbers.value = firstNumber
                     questionSecondNumbers.value = secondNumber
@@ -266,23 +266,23 @@ class PracticeFragmentViewModel @Inject constructor(
         }
     }
 
+    private fun isAnswerSelected(): Boolean {
+        return !(!button1State.value
+                && !button2State.value
+                && !button3State.value
+                && !button4State.value)
+    }
+
     fun validateUserInput() {
-        if (currentQuestion.value == TOTAL_QUESTIONS) {
-            compareUserInputWithCorrectAnswer()
-            updateButtonStates()
-            clearUserAnswerInput()
-            getNextQuestion()
-            writeDataToDatabaseIfPossible()
-            _finishedGame.value = true
-        } else {
-            if (userAnswerInput.value == "") {
-                _popUpMessage.value = getMessage(selectYourAnswer, context)
+
             } else {
                 compareUserInputWithCorrectAnswer()
                 updateButtonStates()
                 clearUserAnswerInput()
                 getNextQuestion()
             }
+        } else {
+            _popUpMessage.value = getMessage(selectYourAnswer, context)
         }
     }
 

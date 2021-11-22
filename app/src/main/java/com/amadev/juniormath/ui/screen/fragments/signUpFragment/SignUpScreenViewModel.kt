@@ -70,8 +70,8 @@ class SignUpScreenViewModel @Inject constructor(
                 repeatPasswordInputErrorTextValue.value = getMessage(passwordsMustBeSame, context)
             }
             else -> {
-                signUpButtonState.value = true
-                createUserWithEmailAndPassword()
+                    signUpButtonState.value = true
+                    createUserWithEmailAndPassword()
             }
         }
     }

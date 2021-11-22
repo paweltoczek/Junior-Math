@@ -34,6 +34,7 @@ import com.amadev.juniormath.ui.screen.components.titleTexts.SmallOverviewText
 import com.amadev.juniormath.ui.screen.components.titleTexts.SmallTitleText
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.util.BundleKeys
+import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -50,6 +51,27 @@ class RangeFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 RangeFragmentUI()
+                setUpViewModel()
+                setUpObservers()
+            }
+        }
+    }
+
+    private fun setUpViewModel() {
+        rangeFragmentViewModel.apply {
+            setUpCategory(arguments?.getString(BundleKeys.Category.name))
+        }
+    }
+
+    private fun setUpObservers() {
+        rangeFragmentViewModel.apply {
+            popUpMessage.observe(viewLifecycleOwner) {
+                showSnackBar(requireView(), it)
+            }
+            goToPracticeFragment.observe(viewLifecycleOwner) {
+                if (it) {
+                    navigateToPracticeFragment()
+                }
             }
         }
     }
@@ -114,7 +136,7 @@ class RangeFragment : Fragment() {
     fun GoToPracticeFragmentButton() {
         Button(
             onClick = {
-                navigateToPracticeFragment()
+                rangeFragmentViewModel.validateInput()
             },
             modifier = Modifier
                 .fillMaxWidth(),

@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -66,7 +65,6 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    @Preview
     @Composable
     fun SignUpScreen() {
         val verificationEmailSentState = signUpScreenViewModel.verificationEmailSentState.value
@@ -130,6 +128,7 @@ class SignUpFragment : Fragment() {
             }
         }
     }
+
 
     @Composable
     fun GoToLoginFragment() {

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -221,7 +222,11 @@ class HomeFragment : Fragment() {
     @Composable
     fun TermsOfUseText() {
         Text(
-            text = stringResource(id = R.string.termsOfUse),
+            modifier = Modifier.clickable {
+                val dialog = TermsOfUsePrivacyPolicyDialog()
+                dialog.show(childFragmentManager, null)
+            },
+            text = stringResource(id = R.string.termsOfUseAndPrivacyPolicy),
             style = MaterialTheme.typography.body1,
             fontSize = 14.sp,
             color = Color.Black

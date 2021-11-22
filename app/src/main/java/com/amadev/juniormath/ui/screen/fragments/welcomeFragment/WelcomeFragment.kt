@@ -7,10 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -20,10 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
+import com.amadev.juniormath.ui.screen.components.appIcon.AppIcon
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -51,6 +51,7 @@ class WelcomeFragment : Fragment() {
         }, 2500)
     }
 
+    @Preview
     @Composable
     fun WelcomeScreen() {
         Scaffold {
@@ -63,13 +64,23 @@ class WelcomeFragment : Fragment() {
                 verticalArrangement = Arrangement.Center
             )
             {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.body1,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 32.sp,
-                    color = MaterialTheme.colors.onSurface
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    AppIcon(canvasSize = 50f)
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.body1,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 32.sp,
+                        color = MaterialTheme.colors.onSurface
+                    )
+                }
             }
         }
     }

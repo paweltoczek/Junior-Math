@@ -16,6 +16,12 @@ sealed class Messages {
     object SelectYourAnswer : Messages()
     object DataSaved : Messages()
     object SomethingWentWrong : Messages()
+    object YouNeedToAcceptTermsOfUseAndPrivacyPolicy : Messages()
+    object FromRangeCantBeLower : Messages()
+    object FirstNumberCantBeZero : Messages()
+    object SecondNumberCantBeZero : Messages()
+    object BothNumbersCantBeZero : Messages()
+
 }
 
 
@@ -51,6 +57,21 @@ interface ProvideMessage {
     val somethingWentWrong: Messages.SomethingWentWrong
         get() = Messages.SomethingWentWrong
 
+    val acceptTermsOfUse: Messages.YouNeedToAcceptTermsOfUseAndPrivacyPolicy
+        get() = Messages.YouNeedToAcceptTermsOfUseAndPrivacyPolicy
+
+    val fromRangeCantBeLower: Messages.FromRangeCantBeLower
+        get() = Messages.FromRangeCantBeLower
+
+    val firstNumberCantBeZero : Messages.FirstNumberCantBeZero
+        get() = Messages.FirstNumberCantBeZero
+
+    val secondNumberCantBeZero : Messages.FirstNumberCantBeZero
+        get() = Messages.FirstNumberCantBeZero
+
+    val bothNumbersCantBeZero : Messages.BothNumbersCantBeZero
+        get() = Messages.BothNumbersCantBeZero
+
     fun getMessage(message: Messages, context: Context) =
         when (message) {
             is Messages.FieldCantBeEmpty -> context.getString(R.string.fieldCantBeEmpty)
@@ -65,6 +86,11 @@ interface ProvideMessage {
             is Messages.SelectYourAnswer -> context.getString(R.string.selectYourAnswer)
             is Messages.DataSaved -> context.getString(R.string.dataSaved)
             is Messages.SomethingWentWrong -> context.getString(R.string.somethingWentWrong)
+            is Messages.YouNeedToAcceptTermsOfUseAndPrivacyPolicy -> context.getString(R.string.acceptTermOfUseRequired)
+            is Messages.FromRangeCantBeLower -> context.getString(R.string.fromRangeCantBeLowerThanToRange)
+            is Messages.FirstNumberCantBeZero -> context.getString(R.string.firstNumberCantBeZero)
+            is Messages.SecondNumberCantBeZero -> context.getString(R.string.secondNumebrCantBeZero)
+            is Messages.BothNumbersCantBeZero -> context.getString(R.string.bothNumbersCantBeZero)
         }
 
 
