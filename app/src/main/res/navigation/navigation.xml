@@ -9,8 +9,10 @@
         android:name="com.amadev.juniormath.ui.screen.fragments.welcomeFragment.WelcomeFragment"
         android:label="WelcomeScreen" >
         <action
-            android:id="@+id/action_welcomeScreen_to_termsOfUsePrivacyPolicyFragment"
-            app:destination="@id/termsOfUsePrivacyPolicyFragment" />
+            android:id="@+id/action_welcomeScreen_to_loginScreenFragment"
+            app:destination="@id/loginScreenFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/loginScreenFragment"
@@ -115,13 +117,5 @@
             app:destination="@id/homeFragment"
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out" />
-    </fragment>
-    <fragment
-        android:id="@+id/termsOfUsePrivacyPolicyFragment"
-        android:name="com.amadev.juniormath.ui.screen.fragments.termsOfUsePrivacyPolicy.TermsOfUsePrivacyPolicyFragment"
-        android:label="TermsOfUsePrivacyPolicyFragment" >
-        <action
-            android:id="@+id/action_termsOfUsePrivacyPolicyFragment_to_loginScreenFragment"
-            app:destination="@id/loginScreenFragment" />
     </fragment>
 </navigation>

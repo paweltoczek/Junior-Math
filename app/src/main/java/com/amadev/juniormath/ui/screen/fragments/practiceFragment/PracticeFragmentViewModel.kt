@@ -171,7 +171,8 @@ class PracticeFragmentViewModel @Inject constructor(
             val firstNumber = (fromRange.value..toRange.value).random()
             val secondNumber = (fromRange.value..toRange.value).random()
 
-            if (firstNumber > secondNumber) {
+            if (firstNumber >
+                secondNumber) {
                 if (firstNumber.toDouble() % secondNumber.toDouble() == 0.00) {
                     questionFirstNumbers.value = firstNumber
                     questionSecondNumbers.value = secondNumber
