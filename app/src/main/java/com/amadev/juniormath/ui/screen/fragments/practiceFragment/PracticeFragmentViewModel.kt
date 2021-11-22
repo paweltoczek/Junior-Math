@@ -122,7 +122,7 @@ class PracticeFragmentViewModel @Inject constructor(
             }
         }
     }
-
+    
     private fun compareUserInputWithCorrectAnswer() {
         if (userAnswerInput.value.toInt() == correctAnswer.value) userCorrectAnswers.value ++
     }
@@ -274,14 +274,7 @@ class PracticeFragmentViewModel @Inject constructor(
     }
 
     fun validateUserInput() {
-        if (isAnswerSelected()) {
-            if (currentQuestion.value == TOTAL_QUESTIONS) {
-                compareUserInputWithCorrectAnswer()
-                updateButtonStates()
-                clearUserAnswerInput()
-                getNextQuestion()
-                writeDataToDatabaseIfPossible()
-                _finishedGame.value = true
+
             } else {
                 compareUserInputWithCorrectAnswer()
                 updateButtonStates()

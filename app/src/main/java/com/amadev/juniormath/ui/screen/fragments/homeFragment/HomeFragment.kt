@@ -39,7 +39,6 @@ import androidx.navigation.fragment.findNavController
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.screen.components.titleTexts.FragmentDescriptionText
 import com.amadev.juniormath.ui.screen.dialogs.logoutDialog.LogoutDialog
-import com.amadev.juniormath.ui.screen.dialogs.termsOfUsePrivacyPolicy.TermsOfUsePrivacyPolicyDialog
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
 import com.amadev.juniormath.util.BundleKeys
 import com.amadev.juniormath.util.Categories
