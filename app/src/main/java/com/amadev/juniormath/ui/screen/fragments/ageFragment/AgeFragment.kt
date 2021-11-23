@@ -25,12 +25,14 @@ import androidx.fragment.app.viewModels
 import com.amadev.juniormath.R
 import com.amadev.juniormath.ui.screen.components.appIcon.AppIcon
 import com.amadev.juniormath.ui.theme.JuniorMathTheme
+import com.amadev.juniormath.util.Util.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AgeFragment : Fragment() {
 
     private val ageFragmentViewModel: AgeFragmentViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,6 +41,15 @@ class AgeFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AgeFragmentUI()
+                setUpObservers()
+            }
+        }
+    }
+
+    private fun setUpObservers() {
+        ageFragmentViewModel.apply {
+            popUpMessage.observe(viewLifecycleOwner) {
+                showSnackBar(requireView(), it.toString())
             }
         }
     }
@@ -56,20 +67,26 @@ class AgeFragment : Fragment() {
                 verticalArrangement = Arrangement.Center
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
+                    modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    AppIcon(canvasSize = 50f)
+                    AppIcon(canvasSize = 30f)
+
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(15f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
                     OutlinedTextField(
                         modifier = Modifier
                             .width(200.dp)
                             .focusable(true),
-                        value = "ageFragmentViewModel.ageInput.value",
-                        onValueChange = { /*input ->
-                        ageFragmentViewModel.ageInput.value = input*/
+                        value = ageFragmentViewModel.ageInput.value,
+                        onValueChange = { input ->
+                            ageFragmentViewModel.ageInput.value = input
                         },
                         label = { stringResource(id = R.string.whatsYourAge) },
                         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -78,7 +95,7 @@ class AgeFragment : Fragment() {
                             textColor = MaterialTheme.colors.onSurface
                         ),
                         textStyle = MaterialTheme.typography.h1,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         keyboardActions = KeyboardActions(onDone = {
                             focusManager.moveFocus(
                                 focusDirection = FocusDirection.Down
@@ -87,7 +104,7 @@ class AgeFragment : Fragment() {
                         singleLine = true
                     )
                     Spacer(modifier = Modifier.height(24.dp))
-                    Button(onClick = { }) {
+                    Button(onClick = { ageFragmentViewModel.validateAgeInput() }) {
                         Text(text = stringResource(id = R.string.accept))
                     }
                 }

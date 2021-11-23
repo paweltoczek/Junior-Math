@@ -47,7 +47,7 @@ class WelcomeFragment : Fragment() {
 
     private fun navigateToLoginScreen() {
         Handler(Looper.myLooper()!!).postDelayed({
-            findNavController().navigate(R.id.action_welcomeScreen_to_loginScreenFragment)
+            findNavController().navigate(R.id.action_welcomeScreen_to_ageFragment)
         }, 2500)
     }
 
@@ -71,7 +71,7 @@ class WelcomeFragment : Fragment() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    AppIcon(canvasSize = 50f)
+                    AppIcon(canvasSize = 40f)
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
                         text = stringResource(R.string.app_name),

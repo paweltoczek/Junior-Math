@@ -2,6 +2,13 @@ package com.amadev.juniormath.util
 
 import android.content.Context
 import com.amadev.juniormath.R
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+
+enum class Message(
+    @ApplicationContext val context: Context,
+    val fieldCantBeEmpty : String = context.getString(R.string.fieldCantBeEmpty)
+)
 
 
 sealed class Messages {
@@ -21,7 +28,6 @@ sealed class Messages {
     object FirstNumberCantBeZero : Messages()
     object SecondNumberCantBeZero : Messages()
     object BothNumbersCantBeZero : Messages()
-
 }
 
 
