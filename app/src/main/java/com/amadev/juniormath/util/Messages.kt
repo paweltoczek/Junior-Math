@@ -1,9 +1,19 @@
 package com.amadev.juniormath.util
 
+import android.app.Application
 import android.content.Context
 import com.amadev.juniormath.R
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.security.AccessController.getContext
 
+
+enum class Example(private val mResourceId: Int) {
+    FieldCantBeEmpty(R.string.fieldCantBeEmpty)
+
+//    override fun toString(): String {
+//        return Application.get.getString(mResourceId)
+//    }
+}
 
 enum class Message(
     val fieldCantBeEmpty : Int = R.string.fieldCantBeEmpty
