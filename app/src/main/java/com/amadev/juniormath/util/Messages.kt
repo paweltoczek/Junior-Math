@@ -6,8 +6,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 enum class Message(
-    @ApplicationContext val context: Context,
-    val fieldCantBeEmpty : String = context.getString(R.string.fieldCantBeEmpty)
+    val fieldCantBeEmpty : Int = R.string.fieldCantBeEmpty
 )
 
 

@@ -18,7 +18,7 @@ class AgeFragmentViewModel @Inject constructor() : ViewModel() {
 
     fun validateAgeInput() {
         if (ageInput.value.isEmpty()) {
-            _popUpMessage.value = Message.values().first().fieldCantBeEmpty
+//            _popUpMessage.value = Message.values().first().fieldCantBeEmpty
         }
     }
 }
